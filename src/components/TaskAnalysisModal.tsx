@@ -1,12 +1,14 @@
-import React from 'react';
-import type { TaskAnalysisResponse } from '../types';
-import { X, Sparkles, Clock, Layers, Flame, CheckCircle2 } from 'lucide-react';
+import React, { useState } from 'react';
+import type { TaskAnalysisResponse, TaskPriority } from '../types';
+import { X, Sparkles, Clock, Layers, Flame, CheckCircle2, Check, Loader2 } from 'lucide-react';
 
 interface TaskAnalysisModalProps {
   isOpen: boolean;
   onClose: () => void;
   analysis: TaskAnalysisResponse | null;
   taskTitle: string;
+  currentPriority?: TaskPriority;
+  onApplyPriority?: (priority: TaskPriority) => Promise<void>;
 }
 
 export const TaskAnalysisModal: React.FC<TaskAnalysisModalProps> = ({
@@ -14,8 +16,25 @@ export const TaskAnalysisModal: React.FC<TaskAnalysisModalProps> = ({
   onClose,
   analysis,
   taskTitle,
+  currentPriority,
+  onApplyPriority,
 }) => {
+  const [applying, setApplying] = useState(false);
+
   if (!isOpen || !analysis) return null;
+
+  const handleApply = async () => {
+    if (!onApplyPriority) return;
+    try {
+      setApplying(true);
+      await onApplyPriority(analysis.priority as TaskPriority);
+      onClose();
+    } finally {
+      setApplying(false);
+    }
+  };
+
+  const isDifferentPriority = currentPriority && analysis.priority !== currentPriority;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
@@ -84,13 +103,24 @@ export const TaskAnalysisModal: React.FC<TaskAnalysisModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-800 bg-slate-950/40 flex justify-end">
+        <div className="p-4 border-t border-slate-800 bg-slate-950/40 flex items-center justify-between">
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl text-slate-400 hover:text-white text-sm font-medium transition-colors"
           >
             Fechar
           </button>
+
+          {isDifferentPriority && onApplyPriority && (
+            <button
+              onClick={handleApply}
+              disabled={applying}
+              className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-40"
+            >
+              {applying ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+              Adotar Prioridade {analysis.priority}
+            </button>
+          )}
         </div>
       </div>
     </div>

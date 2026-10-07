@@ -105,14 +105,12 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
   };
 
   const handleApplyDecomposition = async (selected: SubtaskItem[]) => {
-    for (const item of selected) {
-      await taskService.createSubtask(task.id, {
-        title: item.title,
-        description: item.description,
-        priority: task.priority,
-      });
+    try {
+      await aiService.applyApprovedSubtasks(task.id, selected);
+      onRefresh();
+    } catch (err) {
+      console.error('Erro ao incorporar etapas aprovadas pela IA:', err);
     }
-    onRefresh();
   };
 
   const completedSubtasks = task.subtasks.filter((s) => s.status === 'DONE').length;
@@ -326,6 +324,17 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
         onClose={() => setIsAnalysisModalOpen(false)}
         analysis={analysisResult}
         taskTitle={task.title}
+        currentPriority={task.priority}
+        onApplyPriority={async (newPriority) => {
+          await taskService.updateTask(task.id, {
+            title: task.title,
+            description: task.description || undefined,
+            priority: newPriority,
+            status: task.status,
+            dueDate: task.dueDate || undefined,
+          });
+          onRefresh();
+        }}
       />
 
       <TaskDecompositionModal

@@ -2,6 +2,7 @@ import api from './api';
 import type {
   ChatMessage,
   ChatResponse,
+  SubtaskItem,
   TaskAnalysisResponse,
   TaskDecompositionResponse,
   TaskImprovementResponse,
@@ -26,6 +27,11 @@ export const aiService = {
 
   async applySubtasks(taskId: string): Promise<TaskResponse[]> {
     const response = await api.post<TaskResponse[]>(`/ai/tasks/${taskId}/apply-subtasks`);
+    return response.data;
+  },
+
+  async applyApprovedSubtasks(taskId: string, subtasks: SubtaskItem[]): Promise<TaskResponse[]> {
+    const response = await api.post<TaskResponse[]>(`/ai/tasks/${taskId}/decompose/apply`, subtasks);
     return response.data;
   },
 
