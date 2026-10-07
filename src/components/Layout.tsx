@@ -1,54 +1,79 @@
 import React, { useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useOutletContext } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { AiChatDrawer } from './AiChatDrawer';
+import { SidebarDrawer } from './SidebarDrawer';
 import {
   CheckSquare,
-  LayoutDashboard,
+  Home,
   ListTodo,
   LogOut,
+  Menu,
   Sparkles,
   User as UserIcon,
 } from 'lucide-react';
+
+export interface LayoutContextType {
+  openSidebar: () => void;
+  openChat: () => void;
+}
+
+export const useLayout = () => useOutletContext<LayoutContextType>();
 
 export const Layout: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
+  const contextValue: LayoutContextType = {
+    openSidebar: () => setIsSidebarOpen(true),
+    openChat: () => setIsChatOpen(true),
+  };
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col">
       {/* Top Navigation */}
-      <header className="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          {/* Logo & Brand */}
-          <div className="flex items-center gap-8">
-            <NavLink to="/dashboard" className="flex items-center gap-2.5 text-white font-bold text-lg">
-              <div className="w-9 h-9 rounded-xl bg-blue-600/20 text-blue-500 border border-blue-500/30 flex items-center justify-center">
+          {/* Logo & Brand & Hamburger Menu */}
+          <div className="flex items-center gap-4 sm:gap-6">
+            {/* Hamburger Button */}
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              title="Abrir painel lateral de métricas e opções avançadas"
+              className="p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+
+            {/* Logo */}
+            <NavLink to="/dashboard" className="flex items-center gap-2.5 text-slate-900 font-bold text-lg">
+              <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center">
                 <CheckSquare className="w-5 h-5" />
               </div>
-              <span className="tracking-tight">Taskman<span className="text-blue-500">.ai</span></span>
+              <span className="tracking-tight font-bold">Taskman</span>
             </NavLink>
 
             {/* Nav Links */}
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden md:flex items-center gap-1 ml-4">
               <NavLink
                 to="/dashboard"
                 className={({ isActive }) =>
                   `flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200 font-semibold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`
                 }
               >
-                <LayoutDashboard className="w-4 h-4" />
-                Dashboard
+                <Home className="w-4 h-4" />
+                Hub
               </NavLink>
 
               <NavLink
@@ -56,8 +81,8 @@ export const Layout: React.FC = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200 font-semibold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`
                 }
               >
@@ -71,23 +96,27 @@ export const Layout: React.FC = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsChatOpen(!isChatOpen)}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 text-sm font-medium transition-all shadow-sm cursor-pointer"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-sm font-semibold transition-all shadow-xs cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 text-purple-400" />
+              <Sparkles className="w-4 h-4 text-purple-600" />
               <span className="hidden sm:inline">Assistente IA</span>
             </button>
 
-            <div className="h-6 w-[1px] bg-slate-800 hidden sm:block" />
+            <div className="h-6 w-[1px] bg-slate-200 hidden sm:block" />
 
-            <div className="hidden sm:flex items-center gap-2 text-sm text-slate-300 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl">
-              <UserIcon className="w-4 h-4 text-slate-400" />
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="hidden sm:flex items-center gap-2 text-sm text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl transition-colors cursor-pointer shadow-xs"
+              title="Ver detalhes do perfil e métricas"
+            >
+              <UserIcon className="w-4 h-4 text-slate-500" />
               <span className="font-medium max-w-[120px] truncate">{user?.name}</span>
-            </div>
+            </button>
 
             <button
               onClick={handleLogout}
               title="Sair"
-              className="p-2 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-colors"
+              className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -97,12 +126,21 @@ export const Layout: React.FC = () => {
 
       {/* Main Page Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Outlet />
+        <Outlet context={contextValue} />
       </main>
+
+      {/* Hamburger Lateral Sidebar Drawer */}
+      <SidebarDrawer
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        onOpenChat={() => {
+          setIsSidebarOpen(false);
+          setIsChatOpen(true);
+        }}
+      />
 
       {/* AI Assistant Drawer */}
       <AiChatDrawer isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </div>
   );
 };
-

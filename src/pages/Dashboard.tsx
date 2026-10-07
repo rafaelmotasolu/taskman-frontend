@@ -1,232 +1,373 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { useLayout } from '../components/Layout';
 import { taskService } from '../services/taskService';
-import type { TaskDashboardMetrics, TaskSummary } from '../types';
+import { TaskFormModal } from '../components/TaskFormModal';
+import { TaskDetailsModal } from '../components/TaskDetailsModal';
+import type { TaskCreatePayload, TaskResponse, TaskSummary } from '../types';
 import {
-  AlertTriangle,
   ArrowRight,
   Calendar,
   CheckCircle2,
   Clock,
   Flame,
   Hourglass,
+  Layers,
   ListTodo,
   Loader2,
+  Menu,
+  MessageSquare,
   Plus,
+  Sparkles,
+  Zap,
 } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
-  const [metrics, setMetrics] = useState<TaskDashboardMetrics | null>(null);
-  const [recentTasks, setRecentTasks] = useState<TaskSummary[]>([]);
+  const { user } = useAuth();
+  const { openSidebar, openChat } = useLayout();
+  const navigate = useNavigate();
+
+  const [focusTasks, setFocusTasks] = useState<TaskSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Modals
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+
   useEffect(() => {
-    loadDashboard();
+    loadFocusTasks();
   }, []);
 
-  const loadDashboard = async () => {
+  const loadFocusTasks = async () => {
     try {
       setLoading(true);
-      const [dashMetrics, tasksPage] = await Promise.all([
-        taskService.getDashboard(),
-        taskService.listTasks({ page: 0, size: 5, rootOnly: true }),
-      ]);
-      setMetrics(dashMetrics);
-      setRecentTasks(tasksPage.content);
+      // Carrega tarefas principais com foco em andamento ou a fazer
+      const res = await taskService.listTasks({ page: 0, size: 4, rootOnly: true });
+      setFocusTasks(res.content);
     } catch (err) {
-      console.error('Erro ao carregar dados do dashboard:', err);
+      console.error('Erro ao carregar tarefas no Hub:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-      </div>
-    );
-  }
+  const handleCreateTask = async (payload: TaskCreatePayload) => {
+    await taskService.createTask(payload);
+    loadFocusTasks();
+  };
 
-  const completionRate =
-    metrics && metrics.totalTasks > 0
-      ? Math.round((metrics.doneTasks / metrics.totalTasks) * 100)
-      : 0;
+  const handleOpenTaskDetails = async (id: string) => {
+    try {
+      const task = await taskService.getTaskById(id);
+      setSelectedTask(task);
+      setIsDetailsModalOpen(true);
+    } catch (err) {
+      console.error('Erro ao abrir detalhes da tarefa:', err);
+    }
+  };
 
   return (
-    <div className="space-y-8">
-      {/* Welcome header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Painel de Controle</h1>
-          <p className="text-sm text-slate-400 mt-1">Acompanhe seu fluxo de produtividade e metas em andamento</p>
+    <div className="space-y-10 pb-12">
+      {/* Hero Hub Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-50/90 via-white to-indigo-50/50 border border-blue-100 p-6 sm:p-10 shadow-sm">
+        <div className="relative z-10 max-w-2xl space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/80 text-blue-700 border border-blue-200/80 text-xs font-semibold">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Hub de Produtividade & IA</span>
+          </div>
+
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            Olá, {user?.name?.split(' ')[0] || 'Produtor'}!
+          </h1>
+
+          <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+            Bem-vindo ao centro de comando do <strong className="text-slate-900">Taskman</strong>. Escolha uma funcionalidade abaixo para organizar seu fluxo, decompor metas ou interagir com o assistente inteligente.
+          </p>
+
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-all shadow-md shadow-blue-500/10 cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              Nova Tarefa
+            </button>
+
+            <button
+              onClick={openChat}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-semibold text-sm transition-all shadow-xs cursor-pointer"
+            >
+              <MessageSquare className="w-4 h-4 text-purple-600" />
+              Conversar com a IA
+            </button>
+
+            <button
+              onClick={openSidebar}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-medium text-sm transition-all cursor-pointer border border-slate-200 shadow-xs"
+            >
+              <Menu className="w-4 h-4 text-slate-500" />
+              Painel de Detalhes
+            </button>
+          </div>
         </div>
 
-        <Link
-          to="/tasks"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-all shadow-lg shadow-blue-600/20 w-fit"
-        >
-          <Plus className="w-4 h-4" />
-          Gerenciar Tarefas
-        </Link>
+        {/* Decorative background glow */}
+        <div className="absolute right-0 top-0 -mr-16 -mt-16 w-80 h-80 rounded-full bg-blue-100/60 blur-3xl pointer-events-none" />
       </div>
 
-      {/* Metrics Cards Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        {/* Total Tasks */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4.5 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400 mb-3">
-            <span className="text-xs font-medium">Total</span>
-            <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400">
-              <ListTodo className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl font-bold text-white">{metrics?.totalTasks ?? 0}</div>
+      {/* Main Functionality Hub Cards */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <Zap className="w-5 h-5 text-amber-500" />
+            Módulos e Funcionalidades
+          </h2>
+          <span className="text-xs text-slate-500">Acesso rápido a todos os recursos</span>
         </div>
 
-        {/* TODO */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4.5 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400 mb-3">
-            <span className="text-xs font-medium">A Fazer</span>
-            <div className="p-2 rounded-xl bg-slate-700/30 text-slate-300">
-              <Clock className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl font-bold text-white">{metrics?.todoTasks ?? 0}</div>
-        </div>
-
-        {/* IN_PROGRESS */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4.5 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400 mb-3">
-            <span className="text-xs font-medium">Em Andamento</span>
-            <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400">
-              <Hourglass className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl font-bold text-white">{metrics?.inProgressTasks ?? 0}</div>
-        </div>
-
-        {/* DONE */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4.5 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400 mb-3">
-            <span className="text-xs font-medium">Concluídas</span>
-            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
-              <CheckCircle2 className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl font-bold text-white">{metrics?.doneTasks ?? 0}</div>
-        </div>
-
-        {/* HIGH PRIORITY */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4.5 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400 mb-3">
-            <span className="text-xs font-medium">Alta Prioridade</span>
-            <div className="p-2 rounded-xl bg-rose-500/10 text-rose-400">
-              <Flame className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl font-bold text-white">{metrics?.highPriorityTasks ?? 0}</div>
-        </div>
-
-        {/* OVERDUE */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4.5 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-slate-400 mb-3">
-            <span className="text-xs font-medium">Atrasadas</span>
-            <div className="p-2 rounded-xl bg-red-500/10 text-red-400">
-              <AlertTriangle className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl font-bold text-white text-red-400">{metrics?.overdueTasks ?? 0}</div>
-        </div>
-      </div>
-
-      {/* Progress & Overview */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-semibold text-white">Taxa de Conclusão Global</span>
-          <span className="text-sm font-bold text-blue-400">{completionRate}%</span>
-        </div>
-        <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          {/* Module 1: Kanban Board */}
           <div
-            className="h-full bg-gradient-to-r from-blue-600 to-emerald-500 rounded-full transition-all duration-500"
-            style={{ width: `${completionRate}%` }}
-          />
+            onClick={() => navigate('/tasks')}
+            className="group relative p-6 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all duration-300 shadow-xs cursor-pointer flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <ListTodo className="w-6 h-6" />
+              </div>
+              <h3 className="text-base font-bold text-slate-800 group-hover:text-blue-600 transition-colors">
+                Quadro Kanban
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Gestão visual de tarefas organizada nas colunas A Fazer, Em Andamento e Concluídas com filtros por prioridade.
+              </p>
+            </div>
+
+            <div className="pt-5 flex items-center text-xs font-semibold text-blue-600 group-hover:translate-x-1 transition-transform">
+              <span>Abrir Quadro</span>
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </div>
+          </div>
+
+          {/* Module 2: AI Decomposition */}
+          <div
+            onClick={() => navigate('/tasks')}
+            className="group relative p-6 rounded-2xl bg-white border border-slate-200 hover:border-purple-400 hover:shadow-md transition-all duration-300 shadow-xs cursor-pointer flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Layers className="w-6 h-6" />
+              </div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-slate-800 group-hover:text-purple-600 transition-colors">
+                  Decomposição com IA
+                </h3>
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-50 text-purple-700 border border-purple-200">
+                  Llama 3.2
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Quebre tarefas complexas em etapas práticas estruturadas. Aprove e incorpore apenas as subtarefas desejadas.
+              </p>
+            </div>
+
+            <div className="pt-5 flex items-center text-xs font-semibold text-purple-600 group-hover:translate-x-1 transition-transform">
+              <span>Explorar Etapas</span>
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </div>
+          </div>
+
+          {/* Module 3: AI Assistant */}
+          <div
+            onClick={openChat}
+            className="group relative p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-400 hover:shadow-md transition-all duration-300 shadow-xs cursor-pointer flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <MessageSquare className="w-6 h-6" />
+              </div>
+              <h3 className="text-base font-bold text-slate-800 group-hover:text-emerald-600 transition-colors">
+                Assistente de Produtividade
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Converse em linguagem natural com a IA para consultar prazos, pendências do dia e recomendações ágeis.
+              </p>
+            </div>
+
+            <div className="pt-5 flex items-center text-xs font-semibold text-emerald-600 group-hover:translate-x-1 transition-transform">
+              <span>Iniciar Chat</span>
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </div>
+          </div>
+
+          {/* Module 4: Análise Técnica & Prioridades */}
+          <div
+            onClick={() => navigate('/tasks')}
+            className="group relative p-6 rounded-2xl bg-white border border-slate-200 hover:border-rose-400 hover:shadow-md transition-all duration-300 shadow-xs cursor-pointer flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Flame className="w-6 h-6" />
+              </div>
+              <h3 className="text-base font-bold text-slate-800 group-hover:text-rose-600 transition-colors">
+                Análise Técnica
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Estime complexidade arquitetural, esforço em horas e obtenha sugestões de prioridade calculadas pelo agente.
+              </p>
+            </div>
+
+            <div className="pt-5 flex items-center text-xs font-semibold text-rose-600 group-hover:translate-x-1 transition-transform">
+              <span>Ver Análises</span>
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Recent / Upcoming Tasks Section */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-2.5">
-            <Calendar className="w-5 h-5 text-blue-400" />
-            <h2 className="text-base font-semibold text-white">Tarefas Recentes</h2>
+      {/* Focus Section: Tarefas Ativas em Foco */}
+      <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-base font-bold text-slate-900">Tarefas em Foco</h2>
+            <p className="text-xs text-slate-500 mt-0.5">Prioridades imediatas para sua rotina</p>
           </div>
-          <Link
-            to="/tasks"
-            className="text-xs text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1 transition-colors"
+
+          <button
+            onClick={() => navigate('/tasks')}
+            className="text-xs text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1 transition-colors cursor-pointer"
           >
-            Ver todas <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+            Ver todas no Kanban <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        {recentTasks.length === 0 ? (
-          <div className="text-center py-10 text-slate-400 text-sm">
-            Nenhuma tarefa cadastrada ainda. Comece criando sua primeira tarefa!
+        {loading ? (
+          <div className="flex items-center justify-center py-10">
+            <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+          </div>
+        ) : focusTasks.length === 0 ? (
+          <div className="p-8 text-center text-slate-400 text-xs border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+            Nenhuma tarefa pendente no momento. Clique em "+ Nova Tarefa" para começar!
           </div>
         ) : (
-          <div className="divide-y divide-slate-800">
-            {recentTasks.map((t) => (
-              <div key={t.id} className="py-3.5 flex items-center justify-between gap-4">
-                <div className="min-w-0">
-                  <h4 className="text-sm font-medium text-white truncate">{t.title}</h4>
-                  <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {focusTasks.map((t) => (
+              <div
+                key={t.id}
+                onClick={() => handleOpenTaskDetails(t.id)}
+                className="p-4 rounded-xl bg-slate-50/70 hover:bg-blue-50/30 border border-slate-200 hover:border-blue-300 transition-all cursor-pointer flex items-start justify-between gap-3 group shadow-xs"
+              >
+                <div className="space-y-2 min-w-0 flex-1">
+                  <h4 className="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors truncate">
+                    {t.title}
+                  </h4>
+
+                  <div className="flex flex-wrap items-center gap-2 text-xs">
                     <span
-                      className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${
+                      className={`px-2 py-0.5 rounded-md text-[11px] font-medium flex items-center gap-1 ${
                         t.status === 'DONE'
-                          ? 'bg-emerald-500/10 text-emerald-400'
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                           : t.status === 'IN_PROGRESS'
-                          ? 'bg-amber-500/10 text-amber-400'
-                          : 'bg-slate-800 text-slate-300'
+                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                          : 'bg-slate-100 text-slate-600 border border-slate-200'
                       }`}
                     >
+                      {t.status === 'DONE' ? (
+                        <CheckCircle2 className="w-3 h-3" />
+                      ) : t.status === 'IN_PROGRESS' ? (
+                        <Hourglass className="w-3 h-3" />
+                      ) : (
+                        <Clock className="w-3 h-3" />
+                      )}
                       {t.status === 'DONE' ? 'Concluída' : t.status === 'IN_PROGRESS' ? 'Em Progresso' : 'A Fazer'}
                     </span>
 
                     <span
-                      className={`font-medium ${
+                      className={`text-[11px] font-medium ${
                         t.priority === 'HIGH'
-                          ? 'text-rose-400'
+                          ? 'text-rose-600 font-semibold'
                           : t.priority === 'MEDIUM'
-                          ? 'text-amber-400'
-                          : 'text-slate-400'
+                          ? 'text-amber-600 font-semibold'
+                          : 'text-slate-500'
                       }`}
                     >
-                      {t.priority === 'HIGH' ? 'Alta' : t.priority === 'MEDIUM' ? 'Média' : 'Baixa'}
+                      Prioridade {t.priority}
                     </span>
 
                     {t.dueDate && (
-                      <span>Vence: {new Date(t.dueDate).toLocaleDateString('pt-BR')}</span>
-                    )}
-
-                    {t.subtaskCount > 0 && (
-                      <span className="text-slate-500">
-                        {t.completedSubtaskCount}/{t.subtaskCount} etapas
+                      <span className="text-slate-500 text-[11px] flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {new Date(t.dueDate).toLocaleDateString('pt-BR')}
                       </span>
                     )}
                   </div>
                 </div>
 
-                <Link
-                  to={`/tasks?selected=${t.id}`}
-                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors flex-shrink-0"
-                >
+                <div className="p-2 rounded-lg text-slate-400 group-hover:text-blue-600 transition-colors">
                   <ArrowRight className="w-4 h-4" />
-                </Link>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Banner / Dica para o Painel Lateral */}
+      <div className="p-5 rounded-2xl bg-gradient-to-r from-blue-50/80 to-purple-50/80 border border-blue-200/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-white text-blue-600 border border-blue-100 shadow-xs">
+            <Menu className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="text-sm font-semibold text-slate-900">Estatísticas Completas & Opções Avançadas</h4>
+            <p className="text-xs text-slate-600 mt-0.5">
+              Acesse o menu hambúrguer no topo esquerdo para conferir métricas globais, diagnósticos e links do Swagger.
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={openSidebar}
+          className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 text-xs font-semibold transition-colors cursor-pointer border border-slate-200 shadow-xs whitespace-nowrap"
+        >
+          Abrir Menu Lateral ☰
+        </button>
+      </div>
+
+      {/* Create Task Modal */}
+      <TaskFormModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSubmit={handleCreateTask}
+        initialData={null}
+      />
+
+      {/* Details Modal */}
+      <TaskDetailsModal
+        isOpen={isDetailsModalOpen}
+        onClose={() => {
+          setIsDetailsModalOpen(false);
+          setSelectedTask(null);
+        }}
+        task={selectedTask}
+        onRefresh={() => {
+          if (selectedTask) {
+            taskService.getTaskById(selectedTask.id).then(setSelectedTask);
+          }
+          loadFocusTasks();
+        }}
+        onEdit={() => {
+          setIsDetailsModalOpen(false);
+          navigate('/tasks');
+        }}
+        onDelete={async (id) => {
+          await taskService.deleteTask(id);
+          setIsDetailsModalOpen(false);
+          loadFocusTasks();
+        }}
+      />
     </div>
   );
 };

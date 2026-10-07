@@ -119,19 +119,19 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
+        <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
           {/* Header */}
-          <div className="p-5 border-b border-slate-800 flex items-start justify-between bg-slate-950/40">
+          <div className="p-5 border-b border-slate-100 flex items-start justify-between bg-slate-50">
             <div className="space-y-1.5 min-w-0 pr-4">
               <div className="flex items-center gap-2">
                 <span
                   className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                     task.status === 'DONE'
-                      ? 'bg-emerald-500/10 text-emerald-400'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                       : task.status === 'IN_PROGRESS'
-                      ? 'bg-amber-500/10 text-amber-400'
-                      : 'bg-slate-800 text-slate-300'
+                      ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                      : 'bg-slate-100 text-slate-600 border border-slate-200'
                   }`}
                 >
                   {task.status === 'DONE' ? 'Concluída' : task.status === 'IN_PROGRESS' ? 'Em Progresso' : 'A Fazer'}
@@ -140,10 +140,10 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                 <span
                   className={`text-xs font-semibold flex items-center gap-1 ${
                     task.priority === 'HIGH'
-                      ? 'text-rose-400'
+                      ? 'text-rose-600'
                       : task.priority === 'MEDIUM'
-                      ? 'text-amber-400'
-                      : 'text-slate-400'
+                      ? 'text-amber-600'
+                      : 'text-slate-500'
                   }`}
                 >
                   <Flame className="w-3.5 h-3.5" />
@@ -151,19 +151,19 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                 </span>
 
                 {task.dueDate && (
-                  <span className="text-xs text-slate-400 flex items-center gap-1">
+                  <span className="text-xs text-slate-500 flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5" />
                     {new Date(task.dueDate).toLocaleDateString('pt-BR')}
                   </span>
                 )}
               </div>
 
-              <h2 className="text-lg sm:text-xl font-bold text-white break-words">{task.title}</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900 break-words">{task.title}</h2>
             </div>
 
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors flex-shrink-0"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors flex-shrink-0"
             >
               <X className="w-5 h-5" />
             </button>
@@ -174,19 +174,19 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
             {/* Description */}
             {task.description ? (
               <div className="space-y-1.5">
-                <h4 className="text-xs font-medium text-slate-400 uppercase tracking-wider">Descrição</h4>
-                <p className="text-sm text-slate-200 whitespace-pre-line leading-relaxed bg-slate-950/40 p-3.5 rounded-xl border border-slate-800/80">
+                <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Descrição</h4>
+                <p className="text-sm text-slate-700 whitespace-pre-line leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200">
                   {task.description}
                 </p>
               </div>
             ) : (
-              <p className="text-xs text-slate-500 italic">Sem descrição informada.</p>
+              <p className="text-xs text-slate-400 italic">Sem descrição informada.</p>
             )}
 
             {/* AI Action Buttons */}
-            <div className="p-3.5 rounded-xl bg-purple-950/20 border border-purple-800/30 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-xs font-medium text-purple-300">
-                <Sparkles className="w-4 h-4 text-purple-400" />
+            <div className="p-3.5 rounded-xl bg-purple-50/70 border border-purple-200 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-xs font-semibold text-purple-700">
+                <Sparkles className="w-4 h-4 text-purple-600" />
                 <span>Recursos Inteligentes do Taskman:</span>
               </div>
 
@@ -195,7 +195,7 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                   type="button"
                   onClick={handleAnalyze}
                   disabled={analyzing}
-                  className="px-3 py-1.5 rounded-lg bg-purple-600/30 hover:bg-purple-600/40 text-purple-200 border border-purple-500/30 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-40"
+                  className="px-3 py-1.5 rounded-lg bg-white hover:bg-purple-100/60 text-purple-700 border border-purple-200 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-40 shadow-xs"
                 >
                   {analyzing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Layers className="w-3.5 h-3.5" />}
                   Análise Técnica
@@ -205,7 +205,7 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                   type="button"
                   onClick={handleDecompose}
                   disabled={decomposing}
-                  className="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-md shadow-purple-600/20 cursor-pointer disabled:opacity-40"
+                  className="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer disabled:opacity-40"
                 >
                   {decomposing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
                   Decompor em Etapas
@@ -216,19 +216,19 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
             {/* Subtasks / Etapas */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-blue-400" />
+                <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-blue-600" />
                   Etapas e Subtarefas ({completedSubtasks}/{totalSubtasks})
                 </h4>
                 {totalSubtasks > 0 && (
-                  <span className="text-xs font-semibold text-blue-400">{progressPercent}% concluído</span>
+                  <span className="text-xs font-semibold text-blue-600">{progressPercent}% concluído</span>
                 )}
               </div>
 
               {totalSubtasks > 0 && (
-                <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-blue-500 rounded-full transition-all duration-300"
+                    className="h-full bg-blue-600 rounded-full transition-all duration-300"
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
@@ -244,19 +244,19 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                       onClick={() => handleToggleSubtask(st.id, st.status)}
                       className={`p-3 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer ${
                         isDone
-                          ? 'bg-slate-950/40 border-slate-800/60 opacity-60'
-                          : 'bg-slate-950/80 border-slate-800 hover:border-slate-700'
+                          ? 'bg-slate-50 border-slate-200 opacity-60'
+                          : 'bg-white border-slate-200 hover:border-slate-300 shadow-xs'
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div
                           className={`w-4.5 h-4.5 rounded-md flex items-center justify-center border transition-colors flex-shrink-0 ${
-                            isDone ? 'bg-emerald-600 border-emerald-500 text-white' : 'border-slate-700 bg-slate-900'
+                            isDone ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 bg-white'
                           }`}
                         >
                           {isDone && <Check className="w-3 h-3" />}
                         </div>
-                        <span className={`text-sm ${isDone ? 'line-through text-slate-400' : 'text-slate-100'}`}>
+                        <span className={`text-sm ${isDone ? 'line-through text-slate-400' : 'text-slate-800 font-medium'}`}>
                           {st.title}
                         </span>
                       </div>
@@ -272,12 +272,12 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                   value={newSubtaskTitle}
                   onChange={(e) => setNewSubtaskTitle(e.target.value)}
                   placeholder="Adicionar nova etapa manualmente..."
-                  className="flex-1 bg-slate-950 border border-slate-800 rounded-xl py-2 px-3 text-xs text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                 />
                 <button
                   type="submit"
                   disabled={addingSubtask || !newSubtaskTitle.trim()}
-                  className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold disabled:opacity-40 flex items-center gap-1 transition-colors cursor-pointer"
+                  className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold disabled:opacity-40 flex items-center gap-1 transition-colors cursor-pointer"
                 >
                   {addingSubtask ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
                   Adicionar
@@ -287,10 +287,10 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
           </div>
 
           {/* Footer Actions */}
-          <div className="p-4 border-t border-slate-800 bg-slate-950/40 flex items-center justify-between">
+          <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
             <button
               onClick={() => onDelete(task.id)}
-              className="px-3 py-2 rounded-xl text-rose-400 hover:bg-rose-500/10 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="px-3 py-2 rounded-xl text-rose-600 hover:bg-rose-50 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer border border-transparent hover:border-rose-200"
             >
               <Trash2 className="w-4 h-4" />
               Excluir Tarefa
@@ -302,14 +302,14 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                   onClose();
                   onEdit(task);
                 }}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
               >
                 <Edit className="w-3.5 h-3.5" />
                 Editar
               </button>
               <button
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm"
               >
                 Concluir
               </button>

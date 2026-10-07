@@ -134,17 +134,17 @@ export const Tasks: React.FC = () => {
       {/* Top Header & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Gestão de Tarefas</h1>
-          <p className="text-sm text-slate-400 mt-1">Organize seu fluxo de trabalho visualmente com apoio de IA</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Gestão de Tarefas</h1>
+          <p className="text-sm text-slate-500 mt-1">Organize seu fluxo de trabalho visualmente com apoio de IA</p>
         </div>
 
         <div className="flex items-center gap-2">
           {/* View Mode Toggle */}
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-1 flex items-center gap-1">
+          <div className="bg-white border border-slate-200 rounded-xl p-1 flex items-center gap-1 shadow-xs">
             <button
               onClick={() => setViewMode('kanban')}
               className={`p-1.5 rounded-lg text-xs font-medium transition-colors ${
-                viewMode === 'kanban' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+                viewMode === 'kanban' ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-900'
               }`}
               title="Visualização Kanban"
             >
@@ -153,7 +153,7 @@ export const Tasks: React.FC = () => {
             <button
               onClick={() => setViewMode('list')}
               className={`p-1.5 rounded-lg text-xs font-medium transition-colors ${
-                viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+                viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-900'
               }`}
               title="Visualização em Lista"
             >
@@ -166,7 +166,7 @@ export const Tasks: React.FC = () => {
               setEditingTask(null);
               setIsFormModalOpen(true);
             }}
-            className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm flex items-center gap-2 shadow-lg shadow-blue-600/20 transition-all cursor-pointer"
+            className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm flex items-center gap-2 shadow-sm transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             Nova Tarefa
@@ -175,15 +175,15 @@ export const Tasks: React.FC = () => {
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-3">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-3 shadow-xs">
         <div className="relative flex-1 w-full">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Buscar tarefas por título..."
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 pl-10 pr-4 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-10 pr-4 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
           />
         </div>
 
@@ -191,7 +191,7 @@ export const Tasks: React.FC = () => {
           <select
             value={selectedPriority}
             onChange={(e) => setSelectedPriority(e.target.value as TaskPriority | '')}
-            className="w-full sm:w-44 bg-slate-950 border border-slate-800 rounded-xl py-2 px-3 text-xs text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+            className="w-full sm:w-44 bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs text-slate-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
           >
             <option value="">Todas as Prioridades</option>
             <option value="HIGH">Alta Prioridade</option>
@@ -204,7 +204,7 @@ export const Tasks: React.FC = () => {
       {/* Content Area */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
         </div>
       ) : viewMode === 'kanban' ? (
         /* Kanban Board View */
@@ -212,7 +212,7 @@ export const Tasks: React.FC = () => {
           {/* Column TODO */}
           <KanbanColumn
             title="A Fazer"
-            icon={<Clock className="w-4 h-4 text-slate-400" />}
+            icon={<Clock className="w-4 h-4 text-slate-500" />}
             count={todoTasks.length}
             tasks={todoTasks}
             onSelectTask={handleOpenDetails}
@@ -222,7 +222,7 @@ export const Tasks: React.FC = () => {
           {/* Column IN_PROGRESS */}
           <KanbanColumn
             title="Em Andamento"
-            icon={<Hourglass className="w-4 h-4 text-amber-400" />}
+            icon={<Hourglass className="w-4 h-4 text-amber-500" />}
             count={inProgressTasks.length}
             tasks={inProgressTasks}
             onSelectTask={handleOpenDetails}
@@ -233,7 +233,7 @@ export const Tasks: React.FC = () => {
           {/* Column DONE */}
           <KanbanColumn
             title="Concluída"
-            icon={<CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+            icon={<CheckCircle2 className="w-4 h-4 text-emerald-500" />}
             count={doneTasks.length}
             tasks={doneTasks}
             onSelectTask={handleOpenDetails}
@@ -242,10 +242,10 @@ export const Tasks: React.FC = () => {
         </div>
       ) : (
         /* List View */
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-950/60 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800">
+              <thead className="bg-slate-50 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b border-slate-200">
                 <tr>
                   <th className="py-3 px-4">Título</th>
                   <th className="py-3 px-4">Status</th>
@@ -255,10 +255,10 @@ export const Tasks: React.FC = () => {
                   <th className="py-3 px-4 text-right">Ações</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800">
+              <tbody className="divide-y divide-slate-100">
                 {filteredTasks.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-8 text-center text-slate-500 text-xs">
+                    <td colSpan={6} className="py-8 text-center text-slate-400 text-xs">
                       Nenhuma tarefa encontrada.
                     </td>
                   </tr>
@@ -267,17 +267,17 @@ export const Tasks: React.FC = () => {
                     <tr
                       key={t.id}
                       onClick={() => handleOpenDetails(t.id)}
-                      className="hover:bg-slate-800/40 transition-colors cursor-pointer"
+                      className="hover:bg-slate-50/80 transition-colors cursor-pointer"
                     >
-                      <td className="py-3.5 px-4 font-medium text-white">{t.title}</td>
+                      <td className="py-3.5 px-4 font-medium text-slate-900">{t.title}</td>
                       <td className="py-3.5 px-4">
                         <span
                           className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                             t.status === 'DONE'
-                              ? 'bg-emerald-500/10 text-emerald-400'
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                               : t.status === 'IN_PROGRESS'
-                              ? 'bg-amber-500/10 text-amber-400'
-                              : 'bg-slate-800 text-slate-300'
+                              ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                              : 'bg-slate-100 text-slate-600 border border-slate-200'
                           }`}
                         >
                           {t.status === 'DONE' ? 'Concluída' : t.status === 'IN_PROGRESS' ? 'Em Progresso' : 'A Fazer'}
@@ -287,19 +287,19 @@ export const Tasks: React.FC = () => {
                         <span
                           className={`text-xs font-medium ${
                             t.priority === 'HIGH'
-                              ? 'text-rose-400'
+                              ? 'text-rose-600 font-semibold'
                               : t.priority === 'MEDIUM'
-                              ? 'text-amber-400'
-                              : 'text-slate-400'
+                              ? 'text-amber-600 font-semibold'
+                              : 'text-slate-500'
                           }`}
                         >
                           {t.priority}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 text-xs text-slate-400">
+                      <td className="py-3.5 px-4 text-xs text-slate-500">
                         {t.dueDate ? new Date(t.dueDate).toLocaleDateString('pt-BR') : '-'}
                       </td>
-                      <td className="py-3.5 px-4 text-xs text-slate-400">
+                      <td className="py-3.5 px-4 text-xs text-slate-500">
                         {t.subtaskCount > 0 ? `${t.completedSubtaskCount}/${t.subtaskCount}` : '-'}
                       </td>
                       <td className="py-3.5 px-4 text-right">
@@ -308,7 +308,7 @@ export const Tasks: React.FC = () => {
                             e.stopPropagation();
                             handleDeleteTask(t.id);
                           }}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -371,14 +371,14 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
   onNextStatus,
 }) => {
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col min-h-[500px]">
+    <div className="bg-slate-100/70 border border-slate-200/80 rounded-2xl p-4 flex flex-col min-h-[500px]">
       {/* Column Header */}
-      <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+      <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-200">
         <div className="flex items-center gap-2">
           {icon}
-          <h3 className="text-sm font-bold text-white">{title}</h3>
+          <h3 className="text-sm font-bold text-slate-800">{title}</h3>
         </div>
-        <span className="px-2 py-0.5 rounded-full bg-slate-800 text-xs font-semibold text-slate-400">
+        <span className="px-2 py-0.5 rounded-full bg-white border border-slate-200 text-xs font-semibold text-slate-600 shadow-xs">
           {count}
         </span>
       </div>
@@ -386,7 +386,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
       {/* Column Cards */}
       <div className="space-y-3 flex-1 overflow-y-auto">
         {tasks.length === 0 ? (
-          <div className="h-32 flex items-center justify-center text-xs text-slate-500 border border-dashed border-slate-800 rounded-xl">
+          <div className="h-32 flex items-center justify-center text-xs text-slate-400 border border-dashed border-slate-300 rounded-xl bg-white/40">
             Nenhuma tarefa nesta coluna
           </div>
         ) : (
@@ -394,10 +394,10 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
             <div
               key={task.id}
               onClick={() => onSelectTask(task.id)}
-              className="bg-slate-950/80 border border-slate-800 hover:border-slate-700 p-4 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer group space-y-3"
+              className="bg-white border border-slate-200 hover:border-blue-400 p-4 rounded-xl transition-all shadow-xs hover:shadow-md cursor-pointer group space-y-3"
             >
               <div className="flex items-start justify-between gap-2">
-                <h4 className="text-sm font-semibold text-white group-hover:text-blue-400 transition-colors line-clamp-2">
+                <h4 className="text-sm font-semibold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2">
                   {task.title}
                 </h4>
               </div>
@@ -407,10 +407,10 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
                 <span
                   className={`px-2 py-0.5 rounded-md text-[11px] font-medium flex items-center gap-1 ${
                     task.priority === 'HIGH'
-                      ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                      ? 'bg-rose-50 text-rose-700 border border-rose-200'
                       : task.priority === 'MEDIUM'
-                      ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                      : 'bg-slate-800 text-slate-400'
+                      ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                      : 'bg-slate-100 text-slate-600 border border-slate-200'
                   }`}
                 >
                   <Flame className="w-3 h-3" />
@@ -419,7 +419,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
 
                 {/* Due Date */}
                 {task.dueDate && (
-                  <span className="text-slate-400 text-[11px] flex items-center gap-1">
+                  <span className="text-slate-500 text-[11px] flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
                     {new Date(task.dueDate).toLocaleDateString('pt-BR')}
                   </span>
@@ -427,15 +427,15 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
 
                 {/* Subtask count */}
                 {task.subtaskCount > 0 && (
-                  <span className="text-slate-400 text-[11px] flex items-center gap-1 ml-auto">
-                    <Layers className="w-3 h-3 text-purple-400" />
+                  <span className="text-slate-500 text-[11px] flex items-center gap-1 ml-auto">
+                    <Layers className="w-3 h-3 text-purple-600" />
                     {task.completedSubtaskCount}/{task.subtaskCount}
                   </span>
                 )}
               </div>
 
               {/* Status Move Quick Controls */}
-              <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
                 <div>
                   {onPrevStatus && (
                     <button
@@ -444,7 +444,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
                         onPrevStatus(task.id);
                       }}
                       title="Mover para status anterior"
-                      className="p-1 rounded-md hover:bg-slate-800 hover:text-white transition-colors"
+                      className="p-1 rounded-md hover:bg-slate-100 hover:text-slate-800 transition-colors"
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
@@ -459,7 +459,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
                         onNextStatus(task.id);
                       }}
                       title="Avançar status"
-                      className="p-1 rounded-md hover:bg-slate-800 hover:text-white transition-colors"
+                      className="p-1 rounded-md hover:bg-slate-100 hover:text-slate-800 transition-colors"
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
