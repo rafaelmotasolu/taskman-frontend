@@ -1,7 +1,39 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { CheckSquare, Lock, Mail, Loader2, AlertCircle } from 'lucide-react';
+import { CheckSquare, Lock, Mail, Loader2, AlertCircle, Sparkles } from 'lucide-react';
+
+interface PresetUser {
+  label: string;
+  role: string;
+  email: string;
+  password: string;
+  badgeColor: string;
+}
+
+const PRESET_USERS: PresetUser[] = [
+  {
+    label: 'Administrador',
+    role: 'Admin',
+    email: 'admin@taskman.com',
+    password: 'admin123',
+    badgeColor: 'bg-red-500/10 text-red-400 border-red-500/20',
+  },
+  {
+    label: 'Lucas Silva',
+    role: 'Desenvolvedor',
+    email: 'dev@taskman.com',
+    password: 'admin123',
+    badgeColor: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  },
+  {
+    label: 'Mariana Costa',
+    role: 'Gestora',
+    email: 'gestor@taskman.com',
+    password: 'admin123',
+    badgeColor: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+  },
+];
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -36,8 +68,14 @@ export const Login: React.FC = () => {
     }
   };
 
+  const fillQuickCredentials = (preset: PresetUser) => {
+    setEmail(preset.email);
+    setPassword(preset.password);
+    setError(null);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4 py-8">
       <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-blue-600/20 text-blue-500 mb-4 border border-blue-500/30">
@@ -94,7 +132,36 @@ export const Login: React.FC = () => {
           </button>
         </form>
 
-        <p className="mt-8 text-center text-sm text-slate-400">
+        {/* Contas de teste para demonstração */}
+        <div className="mt-7 pt-5 border-t border-slate-800">
+          <div className="flex items-center justify-between mb-2.5">
+            <span className="text-xs font-medium text-slate-400 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+              Contas de demonstração:
+            </span>
+            <span className="text-[11px] text-slate-500 font-mono">senha: admin123</span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            {PRESET_USERS.map((preset) => (
+              <button
+                key={preset.email}
+                type="button"
+                onClick={() => fillQuickCredentials(preset)}
+                className="flex flex-col items-center p-2 rounded-xl bg-slate-950/60 hover:bg-slate-800 border border-slate-800 hover:border-blue-500/40 transition-all text-center group cursor-pointer"
+              >
+                <span className="text-xs font-semibold text-slate-200 group-hover:text-blue-400 transition-colors truncate w-full">
+                  {preset.label}
+                </span>
+                <span className={`text-[10px] mt-1 px-1.5 py-0.5 rounded border ${preset.badgeColor}`}>
+                  {preset.role}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <p className="mt-6 text-center text-sm text-slate-400">
           Ainda não tem uma conta?{' '}
           <Link to="/register" className="text-blue-400 hover:text-blue-300 font-medium hover:underline">
             Criar conta gratuita
