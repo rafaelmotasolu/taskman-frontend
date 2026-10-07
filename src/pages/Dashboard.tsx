@@ -71,9 +71,9 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="space-y-10 pb-12">
       {/* Hero Hub Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-50/90 via-white to-indigo-50/50 border border-blue-100 p-6 sm:p-10 shadow-sm">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-50/90 via-white to-amber-50/40 border border-orange-100 p-6 sm:p-10 shadow-sm">
         <div className="relative z-10 max-w-2xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/80 text-blue-700 border border-blue-200/80 text-xs font-semibold">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100/80 text-orange-700 border border-orange-200/80 text-xs font-semibold">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Hub de Produtividade & IA</span>
           </div>
@@ -89,7 +89,7 @@ export const Dashboard: React.FC = () => {
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-all shadow-md shadow-blue-500/10 cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold text-sm transition-all shadow-md shadow-orange-500/10 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               Nova Tarefa
@@ -114,7 +114,7 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* Decorative background glow */}
-        <div className="absolute right-0 top-0 -mr-16 -mt-16 w-80 h-80 rounded-full bg-blue-100/60 blur-3xl pointer-events-none" />
+        <div className="absolute right-0 top-0 -mr-16 -mt-16 w-80 h-80 rounded-full bg-orange-100/60 blur-3xl pointer-events-none" />
       </div>
 
       {/* Main Functionality Hub Cards */}
@@ -131,13 +131,13 @@ export const Dashboard: React.FC = () => {
           {/* Module 1: Kanban Board */}
           <div
             onClick={() => navigate('/tasks')}
-            className="group relative p-6 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all duration-300 shadow-xs cursor-pointer flex flex-col justify-between"
+            className="group relative p-6 rounded-2xl bg-white border border-slate-200 hover:border-orange-400 hover:shadow-md transition-all duration-300 shadow-xs cursor-pointer flex flex-col justify-between"
           >
             <div className="space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center group-hover:scale-105 transition-transform">
+              <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 border border-orange-100 flex items-center justify-center group-hover:scale-105 transition-transform">
                 <ListTodo className="w-6 h-6" />
               </div>
-              <h3 className="text-base font-bold text-slate-800 group-hover:text-blue-600 transition-colors">
+              <h3 className="text-base font-bold text-slate-800 group-hover:text-orange-600 transition-colors">
                 Quadro Kanban
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
@@ -145,7 +145,7 @@ export const Dashboard: React.FC = () => {
               </p>
             </div>
 
-            <div className="pt-5 flex items-center text-xs font-semibold text-blue-600 group-hover:translate-x-1 transition-transform">
+            <div className="pt-5 flex items-center text-xs font-semibold text-orange-600 group-hover:translate-x-1 transition-transform">
               <span>Abrir Quadro</span>
               <ArrowRight className="w-4 h-4 ml-1" />
             </div>
@@ -237,7 +237,7 @@ export const Dashboard: React.FC = () => {
 
           <button
             onClick={() => navigate('/tasks')}
-            className="text-xs text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+            className="text-xs text-orange-600 hover:text-orange-700 font-semibold flex items-center gap-1 transition-colors cursor-pointer"
           >
             Ver todas no Kanban <ArrowRight className="w-3.5 h-3.5" />
           </button>
@@ -245,7 +245,7 @@ export const Dashboard: React.FC = () => {
 
         {loading ? (
           <div className="flex items-center justify-center py-10">
-            <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+            <Loader2 className="w-6 h-6 animate-spin text-orange-600" />
           </div>
         ) : focusTasks.length === 0 ? (
           <div className="p-8 text-center text-slate-400 text-xs border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
@@ -257,10 +257,10 @@ export const Dashboard: React.FC = () => {
               <div
                 key={t.id}
                 onClick={() => handleOpenTaskDetails(t.id)}
-                className="p-4 rounded-xl bg-slate-50/70 hover:bg-blue-50/30 border border-slate-200 hover:border-blue-300 transition-all cursor-pointer flex items-start justify-between gap-3 group shadow-xs"
+                className="p-4 rounded-xl bg-slate-50/70 hover:bg-orange-50/30 border border-slate-200 hover:border-orange-300 transition-all cursor-pointer flex items-start justify-between gap-3 group shadow-xs"
               >
                 <div className="space-y-2 min-w-0 flex-1">
-                  <h4 className="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors truncate">
+                  <h4 className="text-sm font-semibold text-slate-800 group-hover:text-orange-600 transition-colors truncate">
                     {t.title}
                   </h4>
 
@@ -305,35 +305,13 @@ export const Dashboard: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="p-2 rounded-lg text-slate-400 group-hover:text-blue-600 transition-colors">
+                <div className="p-2 rounded-lg text-slate-400 group-hover:text-orange-600 transition-colors">
                   <ArrowRight className="w-4 h-4" />
                 </div>
               </div>
             ))}
           </div>
         )}
-      </div>
-
-      {/* Banner / Dica para o Painel Lateral */}
-      <div className="p-5 rounded-2xl bg-gradient-to-r from-blue-50/80 to-purple-50/80 border border-blue-200/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-white text-blue-600 border border-blue-100 shadow-xs">
-            <Menu className="w-5 h-5" />
-          </div>
-          <div>
-            <h4 className="text-sm font-semibold text-slate-900">Estatísticas Completas & Opções Avançadas</h4>
-            <p className="text-xs text-slate-600 mt-0.5">
-              Acesse o menu hambúrguer no topo esquerdo para conferir métricas globais, diagnósticos e links do Swagger.
-            </p>
-          </div>
-        </div>
-
-        <button
-          onClick={openSidebar}
-          className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 text-xs font-semibold transition-colors cursor-pointer border border-slate-200 shadow-xs whitespace-nowrap"
-        >
-          Abrir Menu Lateral ☰
-        </button>
       </div>
 
       {/* Create Task Modal */}

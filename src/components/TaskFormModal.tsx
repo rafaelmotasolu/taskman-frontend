@@ -151,7 +151,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ex.: Desenvolver integração com gateway de pagamento"
               required
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
             />
           </div>
 
@@ -163,7 +163,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
               placeholder="Adicione escopo, regras de negócio ou contexto adicional..."
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 resize-none"
             />
           </div>
 
@@ -174,7 +174,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
               >
                 <option value="LOW">Baixa</option>
                 <option value="MEDIUM">Média</option>
@@ -188,7 +188,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as TaskStatus)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                 >
                   <option value="TODO">A Fazer</option>
                   <option value="IN_PROGRESS">Em Andamento</option>
@@ -205,7 +205,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
               type="datetime-local"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
             />
           </div>
 
@@ -221,7 +221,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
             <button
               type="submit"
               disabled={submitting || !title.trim()}
-              className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold shadow-sm disabled:opacity-50 flex items-center gap-2 transition-all cursor-pointer"
+              className="px-5 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold shadow-sm disabled:opacity-50 flex items-center gap-2 transition-all cursor-pointer"
             >
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : initialData ? 'Salvar Alterações' : 'Criar Tarefa'}
             </button>

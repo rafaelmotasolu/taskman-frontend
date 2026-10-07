@@ -143,8 +143,8 @@ export const Tasks: React.FC = () => {
           <div className="bg-white border border-slate-200 rounded-xl p-1 flex items-center gap-1 shadow-xs">
             <button
               onClick={() => setViewMode('kanban')}
-              className={`p-1.5 rounded-lg text-xs font-medium transition-colors ${
-                viewMode === 'kanban' ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-900'
+              className={`p-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                viewMode === 'kanban' ? 'bg-orange-600 text-white' : 'text-slate-500 hover:text-slate-900'
               }`}
               title="Visualização Kanban"
             >
@@ -152,8 +152,8 @@ export const Tasks: React.FC = () => {
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-lg text-xs font-medium transition-colors ${
-                viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-900'
+              className={`p-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                viewMode === 'list' ? 'bg-orange-600 text-white' : 'text-slate-500 hover:text-slate-900'
               }`}
               title="Visualização em Lista"
             >
@@ -166,7 +166,7 @@ export const Tasks: React.FC = () => {
               setEditingTask(null);
               setIsFormModalOpen(true);
             }}
-            className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm flex items-center gap-2 shadow-sm transition-all cursor-pointer"
+            className="px-4 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-medium text-sm flex items-center gap-2 shadow-sm transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             Nova Tarefa
@@ -183,7 +183,7 @@ export const Tasks: React.FC = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Buscar tarefas por título..."
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-10 pr-4 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-10 pr-4 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
           />
         </div>
 
@@ -191,7 +191,7 @@ export const Tasks: React.FC = () => {
           <select
             value={selectedPriority}
             onChange={(e) => setSelectedPriority(e.target.value as TaskPriority | '')}
-            className="w-full sm:w-44 bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs text-slate-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+            className="w-full sm:w-44 bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs text-slate-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
           >
             <option value="">Todas as Prioridades</option>
             <option value="HIGH">Alta Prioridade</option>
@@ -204,7 +204,7 @@ export const Tasks: React.FC = () => {
       {/* Content Area */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <Loader2 className="w-8 h-8 animate-spin text-orange-600" />
         </div>
       ) : viewMode === 'kanban' ? (
         /* Kanban Board View */
@@ -394,10 +394,10 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
             <div
               key={task.id}
               onClick={() => onSelectTask(task.id)}
-              className="bg-white border border-slate-200 hover:border-blue-400 p-4 rounded-xl transition-all shadow-xs hover:shadow-md cursor-pointer group space-y-3"
+              className="bg-white border border-slate-200 hover:border-orange-400 p-4 rounded-xl transition-all shadow-xs hover:shadow-md cursor-pointer group space-y-3"
             >
               <div className="flex items-start justify-between gap-2">
-                <h4 className="text-sm font-semibold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+                <h4 className="text-sm font-semibold text-slate-900 group-hover:text-orange-600 transition-colors line-clamp-2">
                   {task.title}
                 </h4>
               </div>

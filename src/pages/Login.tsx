@@ -24,7 +24,7 @@ const PRESET_USERS: PresetUser[] = [
     role: 'Desenvolvedor',
     email: 'dev@taskman.com',
     password: 'admin123',
-    badgeColor: 'bg-blue-50 text-blue-700 border-blue-200',
+    badgeColor: 'bg-orange-50 text-orange-700 border-orange-200',
   },
   {
     label: 'Mariana Costa',
@@ -78,7 +78,7 @@ export const Login: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-8">
       <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-8 shadow-xl">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-blue-50 text-blue-600 mb-4 border border-blue-200">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-orange-50 text-orange-600 mb-4 border border-orange-200">
             <CheckSquare className="w-8 h-8" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Taskman</h1>
@@ -103,7 +103,7 @@ export const Login: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="seu.email@exemplo.com"
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-11 pr-4 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-11 pr-4 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm"
               />
             </div>
           </div>
@@ -118,7 +118,7 @@ export const Login: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-11 pr-4 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-11 pr-4 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm"
               />
             </div>
           </div>
@@ -126,7 +126,7 @@ export const Login: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-xl shadow-md shadow-blue-500/10 transition-all flex items-center justify-center gap-2 disabled:opacity-50 text-sm cursor-pointer mt-2"
+            className="w-full bg-orange-600 hover:bg-orange-700 text-white font-medium py-2.5 px-4 rounded-xl shadow-md shadow-orange-500/10 transition-all flex items-center justify-center gap-2 disabled:opacity-50 text-sm cursor-pointer mt-2"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Entrar na Plataforma'}
           </button>
@@ -136,7 +136,7 @@ export const Login: React.FC = () => {
         <div className="mt-7 pt-5 border-t border-slate-100">
           <div className="flex items-center justify-between mb-2.5">
             <span className="text-xs font-medium text-slate-600 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+              <Sparkles className="w-3.5 h-3.5 text-orange-600" />
               Contas de demonstração:
             </span>
             <span className="text-[11px] text-slate-400 font-mono">senha: admin123</span>
@@ -148,9 +148,9 @@ export const Login: React.FC = () => {
                 key={preset.email}
                 type="button"
                 onClick={() => fillQuickCredentials(preset)}
-                className="flex flex-col items-center p-2 rounded-xl bg-slate-50 hover:bg-blue-50/50 border border-slate-200 hover:border-blue-300 transition-all text-center group cursor-pointer"
+                className="flex flex-col items-center p-2 rounded-xl bg-slate-50 hover:bg-orange-50/50 border border-slate-200 hover:border-orange-300 transition-all text-center group cursor-pointer"
               >
-                <span className="text-xs font-semibold text-slate-800 group-hover:text-blue-600 transition-colors truncate w-full">
+                <span className="text-xs font-semibold text-slate-800 group-hover:text-orange-600 transition-colors truncate w-full">
                   {preset.label}
                 </span>
                 <span className={`text-[10px] mt-1 px-1.5 py-0.5 rounded border ${preset.badgeColor}`}>
@@ -163,7 +163,7 @@ export const Login: React.FC = () => {
 
         <p className="mt-6 text-center text-sm text-slate-500">
           Ainda não tem uma conta?{' '}
-          <Link to="/register" className="text-blue-600 hover:text-blue-700 font-semibold hover:underline">
+          <Link to="/register" className="text-orange-600 hover:text-orange-700 font-semibold hover:underline">
             Criar conta gratuita
           </Link>
         </p>

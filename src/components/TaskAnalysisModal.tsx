@@ -82,7 +82,7 @@ export const TaskAnalysisModal: React.FC<TaskAnalysisModalProps> = ({
 
             {/* Estimated Hours */}
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
-              <div className="flex items-center justify-center text-blue-600 mb-1">
+              <div className="flex items-center justify-center text-orange-600 mb-1">
                 <Clock className="w-4 h-4" />
               </div>
               <span className="text-[11px] font-semibold text-slate-500 block">Estimativa</span>

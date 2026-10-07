@@ -217,18 +217,18 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                  <CheckCircle2 className="w-4 h-4 text-orange-600" />
                   Etapas e Subtarefas ({completedSubtasks}/{totalSubtasks})
                 </h4>
                 {totalSubtasks > 0 && (
-                  <span className="text-xs font-semibold text-blue-600">{progressPercent}% concluído</span>
+                  <span className="text-xs font-semibold text-orange-600">{progressPercent}% concluído</span>
                 )}
               </div>
 
               {totalSubtasks > 0 && (
                 <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-blue-600 rounded-full transition-all duration-300"
+                    className="h-full bg-orange-600 rounded-full transition-all duration-300"
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
@@ -272,12 +272,12 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                   value={newSubtaskTitle}
                   onChange={(e) => setNewSubtaskTitle(e.target.value)}
                   placeholder="Adicionar nova etapa manualmente..."
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                 />
                 <button
                   type="submit"
                   disabled={addingSubtask || !newSubtaskTitle.trim()}
-                  className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold disabled:opacity-40 flex items-center gap-1 transition-colors cursor-pointer"
+                  className="px-3.5 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-semibold disabled:opacity-40 flex items-center gap-1 transition-colors cursor-pointer"
                 >
                   {addingSubtask ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
                   Adicionar
@@ -309,7 +309,7 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
               </button>
               <button
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm"
+                className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm"
               >
                 Concluir
               </button>

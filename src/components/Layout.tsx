@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, Outlet, useNavigate, useOutletContext } from 'react-router-dom';
+import { NavLink, Outlet, useOutletContext } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { AiChatDrawer } from './AiChatDrawer';
 import { SidebarDrawer } from './SidebarDrawer';
@@ -7,7 +7,6 @@ import {
   CheckSquare,
   Home,
   ListTodo,
-  LogOut,
   Menu,
   Sparkles,
   User as UserIcon,
@@ -21,15 +20,9 @@ export interface LayoutContextType {
 export const useLayout = () => useOutletContext<LayoutContextType>();
 
 export const Layout: React.FC = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
 
   const contextValue: LayoutContextType = {
     openSidebar: () => setIsSidebarOpen(true),
@@ -54,7 +47,7 @@ export const Layout: React.FC = () => {
 
             {/* Logo */}
             <NavLink to="/dashboard" className="flex items-center gap-2.5 text-slate-900 font-bold text-lg">
-              <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center justify-center">
                 <CheckSquare className="w-5 h-5" />
               </div>
               <span className="tracking-tight font-bold">Taskman</span>
@@ -67,7 +60,7 @@ export const Layout: React.FC = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-blue-50 text-blue-700 border border-blue-200 font-semibold'
+                      ? 'bg-orange-50 text-orange-700 border border-orange-200 font-semibold'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`
                 }
@@ -81,7 +74,7 @@ export const Layout: React.FC = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-blue-50 text-blue-700 border border-blue-200 font-semibold'
+                      ? 'bg-orange-50 text-orange-700 border border-orange-200 font-semibold'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`
                 }
@@ -92,7 +85,7 @@ export const Layout: React.FC = () => {
             </nav>
           </div>
 
-          {/* Right actions: AI Chat Toggle + Profile + Logout */}
+          {/* Right actions: AI Chat Toggle + Profile */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsChatOpen(!isChatOpen)}
@@ -111,14 +104,6 @@ export const Layout: React.FC = () => {
             >
               <UserIcon className="w-4 h-4 text-slate-500" />
               <span className="font-medium max-w-[120px] truncate">{user?.name}</span>
-            </button>
-
-            <button
-              onClick={handleLogout}
-              title="Sair"
-              className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
-            >
-              <LogOut className="w-4 h-4" />
             </button>
           </div>
         </div>

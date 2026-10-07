@@ -85,7 +85,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
           {/* Header */}
           <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center justify-center">
                 <Layers className="w-4 h-4" />
               </div>
               <div>
@@ -107,7 +107,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
             {/* User Profile Card */}
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
                   {user?.name ? user.name.slice(0, 2).toUpperCase() : <UserIcon className="w-5 h-5" />}
                 </div>
                 <div className="min-w-0">
@@ -116,7 +116,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                 </div>
               </div>
 
-              <span className="px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 uppercase tracking-wide">
+              <span className="px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-orange-50 text-orange-700 border border-orange-200 uppercase tracking-wide">
                 {user?.role === 'ROLE_ADMIN' ? 'Administrador' : 'Membro'}
               </span>
             </div>
@@ -125,13 +125,13 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                  <Activity className="w-3.5 h-3.5 text-blue-600" />
+                  <Activity className="w-3.5 h-3.5 text-orange-600" />
                   Métricas Detalhadas
                 </h4>
                 <button
                   onClick={loadMetrics}
                   disabled={loadingMetrics}
-                  className="text-[11px] text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1 cursor-pointer font-medium"
+                  className="text-[11px] text-orange-600 hover:text-orange-700 transition-colors flex items-center gap-1 cursor-pointer font-medium"
                 >
                   {loadingMetrics && <Loader2 className="w-3 h-3 animate-spin" />}
                   Atualizar
@@ -146,7 +146,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                 </div>
                 <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-blue-600 to-emerald-500 rounded-full transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-orange-600 to-emerald-500 rounded-full transition-all duration-500"
                     style={{ width: `${completionRate}%` }}
                   />
                 </div>
@@ -157,7 +157,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                 {/* Total */}
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
                   <div className="flex items-center gap-1.5 text-slate-500 mb-1">
-                    <ListTodo className="w-3.5 h-3.5 text-blue-600" />
+                    <ListTodo className="w-3.5 h-3.5 text-orange-600" />
                     <span>Total Tarefas</span>
                   </div>
                   <span className="text-lg font-bold text-slate-900">{metrics?.totalTasks ?? 0}</span>
@@ -288,7 +288,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
               <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-600 flex items-center gap-1.5">
-                    <Server className="w-3.5 h-3.5 text-blue-600" />
+                    <Server className="w-3.5 h-3.5 text-orange-600" />
                     Backend API
                   </span>
                   <span className="text-emerald-700 font-mono font-medium">Spring Boot 4 (Online)</span>
@@ -316,13 +316,13 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                 href="/swagger-ui/index.html"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-between p-3 rounded-xl bg-blue-50/70 hover:bg-blue-100/70 border border-blue-200 text-blue-700 text-xs font-medium transition-colors"
+                className="flex items-center justify-between p-3 rounded-xl bg-orange-50/70 hover:bg-orange-100/70 border border-orange-200 text-orange-700 text-xs font-medium transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <ExternalLink className="w-4 h-4 text-blue-600" />
+                  <ExternalLink className="w-4 h-4 text-orange-600" />
                   <span>Documentação Swagger / OpenAPI</span>
                 </div>
-                <ChevronRight className="w-4 h-4 text-blue-600" />
+                <ChevronRight className="w-4 h-4 text-orange-600" />
               </a>
             </div>
           </div>

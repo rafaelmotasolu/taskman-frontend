@@ -158,7 +158,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose }) =
             <div
               className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 text-xs ${
                 msg.role === 'USER'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-orange-600 text-white'
                   : 'bg-purple-50 text-purple-700 border border-purple-200'
               }`}
             >
@@ -168,7 +168,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose }) =
             <div
               className={`max-w-[80%] rounded-2xl p-3 text-sm leading-relaxed whitespace-pre-wrap ${
                 msg.role === 'USER'
-                  ? 'bg-blue-600 text-white rounded-tr-none shadow-xs'
+                  ? 'bg-orange-600 text-white rounded-tr-none shadow-xs'
                   : 'bg-slate-100 text-slate-800 border border-slate-200/80 rounded-tl-none shadow-xs'
               }`}
             >
