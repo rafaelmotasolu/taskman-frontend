@@ -11,6 +11,9 @@ export default defineConfig({
       '/auth': 'http://localhost:8080',
       '/tasks': 'http://localhost:8080',
       '/ai': 'http://localhost:8080',
+      '/swagger-ui': 'http://localhost:8080',
+      '/swagger-ui.html': 'http://localhost:8080',
+      '/v3/api-docs': 'http://localhost:8080',
     },
   },
 })

@@ -313,7 +313,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
 
               {/* Swagger Docs Link */}
               <a
-                href="/swagger-ui.html"
+                href="/swagger-ui/index.html"
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center justify-between p-3 rounded-xl bg-blue-50/70 hover:bg-blue-100/70 border border-blue-200 text-blue-700 text-xs font-medium transition-colors"
