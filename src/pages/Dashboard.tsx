@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { useLayout } from '../components/Layout';
+import { useAuth } from '../hooks/useAuth';
+import { useLayout } from '../hooks/useLayout';
 import { taskService } from '../services/taskService';
 import { TaskFormModal } from '../components/TaskFormModal';
 import { TaskDetailsModal } from '../components/TaskDetailsModal';
@@ -36,14 +36,8 @@ export const Dashboard: React.FC = () => {
   const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
-  useEffect(() => {
-    loadFocusTasks();
-  }, []);
-
   const loadFocusTasks = async () => {
     try {
-      setLoading(true);
-      // Carrega tarefas principais com foco em andamento ou a fazer
       const res = await taskService.listTasks({ page: 0, size: 4, rootOnly: true });
       setFocusTasks(res.content);
     } catch (err) {
@@ -52,6 +46,19 @@ export const Dashboard: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    taskService.listTasks({ page: 0, size: 4, rootOnly: true })
+      .then((res) => {
+        setFocusTasks(res.content);
+      })
+      .catch((err) => {
+        console.error('Erro ao carregar tarefas no Hub:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   const handleCreateTask = async (payload: TaskCreatePayload) => {
     await taskService.createTask(payload);

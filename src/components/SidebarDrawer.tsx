@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { taskService } from '../services/taskService';
 import type { TaskDashboardMetrics } from '../types';
 import {
@@ -41,12 +41,6 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
   const [metrics, setMetrics] = useState<TaskDashboardMetrics | null>(null);
   const [loadingMetrics, setLoadingMetrics] = useState(false);
 
-  useEffect(() => {
-    if (isOpen) {
-      loadMetrics();
-    }
-  }, [isOpen]);
-
   const loadMetrics = async () => {
     try {
       setLoadingMetrics(true);
@@ -58,6 +52,18 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
       setLoadingMetrics(false);
     }
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      taskService.getDashboard()
+        .then((data) => {
+          setMetrics(data);
+        })
+        .catch((err) => {
+          console.error('Erro ao carregar métricas no painel lateral:', err);
+        });
+    }
+  }, [isOpen]);
 
   const handleLogout = () => {
     onClose();

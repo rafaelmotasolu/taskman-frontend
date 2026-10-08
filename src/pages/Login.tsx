@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { CheckSquare, Lock, Mail, Loader2, AlertCircle, Sparkles } from 'lucide-react';
 
 interface PresetUser {

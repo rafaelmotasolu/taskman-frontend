@@ -18,19 +18,17 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose }) =
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+
   useEffect(() => {
     localStorage.setItem('@taskman:chatSession', sessionId);
-    loadHistory(sessionId);
+    aiService.getChatHistory(sessionId)
+      .then((history) => {
+        setMessages(history);
+      })
+      .catch(() => {
+        // History might be empty for a new session
+      });
   }, [sessionId]);
-
-  const loadHistory = async (session: string) => {
-    try {
-      const history = await aiService.getChatHistory(session);
-      setMessages(history);
-    } catch {
-      // History might be empty for a new session
-    }
-  };
 
   useEffect(() => {
     if (isOpen) {
@@ -66,7 +64,7 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose }) =
         createdAt: response.timestamp,
       };
       setMessages((prev) => [...prev, assistantMsg]);
-    } catch (err) {
+    } catch {
       const errorMsg: ChatMessage = {
         id: crypto.randomUUID(),
         sessionId,

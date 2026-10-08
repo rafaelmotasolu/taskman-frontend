@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import type { TaskCreatePayload, TaskPriority, TaskResponse, TaskStatus } from '../types';
 import { aiService } from '../services/aiService';
 import { X, Sparkles, Loader2, Check } from 'lucide-react';
@@ -16,35 +16,33 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
   onSubmit,
   initialData,
 }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState<TaskPriority>('MEDIUM');
-  const [status, setStatus] = useState<TaskStatus>('TODO');
-  const [dueDate, setDueDate] = useState('');
+  if (!isOpen) return null;
+
+  return (
+    <TaskFormDialog
+      key={initialData ? initialData.id : 'new-task'}
+      onClose={onClose}
+      onSubmit={onSubmit}
+      initialData={initialData}
+    />
+  );
+};
+
+const TaskFormDialog: React.FC<Omit<TaskFormModalProps, 'isOpen'>> = ({
+  onClose,
+  onSubmit,
+  initialData,
+}) => {
+  const [title, setTitle] = useState(initialData?.title || '');
+  const [description, setDescription] = useState(initialData?.description || '');
+  const [priority, setPriority] = useState<TaskPriority>(initialData?.priority || 'MEDIUM');
+  const [status, setStatus] = useState<TaskStatus>(initialData?.status || 'TODO');
+  const [dueDate, setDueDate] = useState(initialData?.dueDate ? initialData.dueDate.slice(0, 16) : '');
   const [submitting, setSubmitting] = useState(false);
 
   // AI Improvement State
   const [improving, setImproving] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState<{ title: string; description: string } | null>(null);
-
-  useEffect(() => {
-    if (initialData) {
-      setTitle(initialData.title);
-      setDescription(initialData.description || '');
-      setPriority(initialData.priority);
-      setStatus(initialData.status);
-      setDueDate(initialData.dueDate ? initialData.dueDate.slice(0, 16) : '');
-    } else {
-      setTitle('');
-      setDescription('');
-      setPriority('MEDIUM');
-      setStatus('TODO');
-      setDueDate('');
-    }
-    setAiSuggestion(null);
-  }, [initialData, isOpen]);
-
-  if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

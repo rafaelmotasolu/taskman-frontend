@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { NavLink, Outlet, useOutletContext } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { NavLink, Outlet } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import type { LayoutContextType } from '../hooks/useLayout';
 import { AiChatDrawer } from './AiChatDrawer';
 import { SidebarDrawer } from './SidebarDrawer';
 import {
@@ -11,13 +12,6 @@ import {
   Sparkles,
   User as UserIcon,
 } from 'lucide-react';
-
-export interface LayoutContextType {
-  openSidebar: () => void;
-  openChat: () => void;
-}
-
-export const useLayout = () => useOutletContext<LayoutContextType>();
 
 export const Layout: React.FC = () => {
   const { user } = useAuth();

@@ -1,39 +1,24 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { authService } from '../services/authService';
+import { AuthContext } from './authContextDef';
 import type { User } from '../types';
 
-interface AuthContextType {
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  loading: boolean;
-  login: (credentials: { email: string; password: string }) => Promise<void>;
-  register: (data: { name: string; email: string; password: string }) => Promise<void>;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextType>({} as AuthContextType);
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem('@taskman:token'));
+  const [user, setUser] = useState<User | null>(() => {
     const storedToken = localStorage.getItem('@taskman:token');
     const storedUser = localStorage.getItem('@taskman:user');
-
     if (storedToken && storedUser) {
       try {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
+        return JSON.parse(storedUser);
       } catch {
         localStorage.removeItem('@taskman:token');
         localStorage.removeItem('@taskman:user');
       }
     }
-    setLoading(false);
-  }, []);
+    return null;
+  });
+  const [loading] = useState(false);
 
   const login = async (credentials: { email: string; password: string }) => {
     const response = await authService.login(credentials);
@@ -89,10 +74,3 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth deve ser utilizado dentro de um AuthProvider');
-  }
-  return context;
-};

@@ -39,18 +39,6 @@ export const Tasks: React.FC = () => {
 
   const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    loadTasks();
-  }, []);
-
-  // Handle URL query param e.g. /tasks?selected=<id>
-  useEffect(() => {
-    const selectedId = searchParams.get('selected');
-    if (selectedId) {
-      handleOpenDetails(selectedId);
-    }
-  }, [searchParams]);
-
   const loadTasks = async () => {
     try {
       setLoading(true);
@@ -72,6 +60,34 @@ export const Tasks: React.FC = () => {
       console.error('Erro ao obter detalhes da tarefa:', err);
     }
   };
+
+  useEffect(() => {
+    taskService.listTasks({ size: 100, rootOnly: true })
+      .then((res) => {
+        setTasks(res.content);
+      })
+      .catch((err) => {
+        console.error('Erro ao carregar tarefas:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  // Handle URL query param e.g. /tasks?selected=<id>
+  useEffect(() => {
+    const selectedId = searchParams.get('selected');
+    if (selectedId) {
+      taskService.getTaskById(selectedId)
+        .then((fullTask) => {
+          setSelectedTask(fullTask);
+          setIsDetailsModalOpen(true);
+        })
+        .catch((err) => {
+          console.error('Erro ao obter detalhes da tarefa:', err);
+        });
+    }
+  }, [searchParams]);
 
   const handleRefreshSelectedTask = async () => {
     if (selectedTask) {
