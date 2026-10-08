@@ -92,11 +92,13 @@ export interface ChatMessage {
   role: MessageRole;
   content: string;
   createdAt: string;
+  createdTasks?: TaskResponse[];
 }
 
 export interface ChatResponse {
   sessionId: string;
   message: string;
   timestamp: string;
+  createdTasks?: TaskResponse[];
 }
 

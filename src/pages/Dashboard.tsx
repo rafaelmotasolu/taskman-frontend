@@ -58,6 +58,14 @@ export const Dashboard: React.FC = () => {
       .finally(() => {
         setLoading(false);
       });
+
+    const handleTaskCreated = () => {
+      loadFocusTasks();
+    };
+    window.addEventListener('taskman:task-created', handleTaskCreated);
+    return () => {
+      window.removeEventListener('taskman:task-created', handleTaskCreated);
+    };
   }, []);
 
   const handleCreateTask = async (payload: TaskCreatePayload) => {

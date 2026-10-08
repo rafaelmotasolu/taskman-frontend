@@ -72,6 +72,14 @@ export const Tasks: React.FC = () => {
       .finally(() => {
         setLoading(false);
       });
+
+    const handleTaskCreated = () => {
+      loadTasks();
+    };
+    window.addEventListener('taskman:task-created', handleTaskCreated);
+    return () => {
+      window.removeEventListener('taskman:task-created', handleTaskCreated);
+    };
   }, []);
 
   // Handle URL query param e.g. /tasks?selected=<id>

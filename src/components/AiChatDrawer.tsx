@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { aiService } from '../services/aiService';
 import type { ChatMessage } from '../types';
-import { Bot, Send, User, X, Loader2, Sparkles, RefreshCw } from 'lucide-react';
+import { Bot, Send, User, X, Loader2, Sparkles, RefreshCw, CheckCircle2, Calendar } from 'lucide-react';
 
 interface AiChatDrawerProps {
   isOpen: boolean;
@@ -62,8 +62,15 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose }) =
         role: 'ASSISTANT',
         content: response.message,
         createdAt: response.timestamp,
+        createdTasks: response.createdTasks,
       };
       setMessages((prev) => [...prev, assistantMsg]);
+
+      if (response.createdTasks && response.createdTasks.length > 0) {
+        window.dispatchEvent(
+          new CustomEvent('taskman:task-created', { detail: response.createdTasks })
+        );
+      }
     } catch {
       const errorMsg: ChatMessage = {
         id: crypto.randomUUID(),
@@ -133,6 +140,12 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose }) =
             </p>
             <div className="mt-4 flex flex-col gap-2 max-w-xs mx-auto">
               <button
+                onClick={() => setInput("Crie uma tarefa 'Revisar documentação da API' para amanhã com prioridade alta")}
+                className="text-xs text-left p-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 transition-colors cursor-pointer"
+              >
+                ✨ "Crie uma tarefa 'Revisar documentação da API' para amanhã com prioridade alta"
+              </button>
+              <button
                 onClick={() => setInput('Quais tarefas de alta prioridade eu tenho?')}
                 className="text-xs text-left p-2.5 rounded-xl bg-slate-50 hover:bg-purple-50/50 text-slate-700 border border-slate-200 hover:border-purple-200 transition-colors cursor-pointer"
               >
@@ -170,7 +183,43 @@ export const AiChatDrawer: React.FC<AiChatDrawerProps> = ({ isOpen, onClose }) =
                   : 'bg-slate-100 text-slate-800 border border-slate-200/80 rounded-tl-none shadow-xs'
               }`}
             >
-              {msg.content}
+              <div>{msg.content}</div>
+
+              {msg.createdTasks && msg.createdTasks.length > 0 && (
+                <div className="mt-3 space-y-2 pt-2 border-t border-slate-200/60">
+                  {msg.createdTasks.map((t) => (
+                    <div
+                      key={t.id}
+                      className="p-3 bg-white rounded-xl border border-purple-200/80 shadow-xs flex flex-col gap-1.5"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">
+                          <CheckCircle2 className="w-3 h-3 text-purple-600" />
+                          Tarefa Criada
+                        </span>
+                        <span
+                          className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
+                            t.priority === 'HIGH'
+                              ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                              : t.priority === 'MEDIUM'
+                              ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                              : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          }`}
+                        >
+                          {t.priority === 'HIGH' ? 'Alta' : t.priority === 'MEDIUM' ? 'Média' : 'Baixa'}
+                        </span>
+                      </div>
+                      <p className="text-xs font-semibold text-slate-900">{t.title}</p>
+                      {t.dueDate && (
+                        <div className="flex items-center gap-1 text-[11px] text-slate-500">
+                          <Calendar className="w-3 h-3 text-slate-400" />
+                          <span>Prazo: {new Date(t.dueDate).toLocaleDateString('pt-BR')}</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         ))}
