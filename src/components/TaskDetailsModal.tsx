@@ -4,6 +4,7 @@ import { taskService } from '../services/taskService';
 import { aiService } from '../services/aiService';
 import { TaskAnalysisModal } from './TaskAnalysisModal';
 import { TaskDecompositionModal } from './TaskDecompositionModal';
+import { ConfirmCompletionModal } from './ConfirmCompletionModal';
 import {
   X,
   Calendar,
@@ -47,7 +48,42 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
   const [decompositionItems, setDecompositionItems] = useState<SubtaskItem[]>([]);
   const [isDecomposeModalOpen, setIsDecomposeModalOpen] = useState(false);
 
+  // Completion states
+  const [isConfirmCompletionOpen, setIsConfirmCompletionOpen] = useState(false);
+  const [completionLoading, setCompletionLoading] = useState(false);
+
   if (!isOpen || !task) return null;
+
+  const handleCompleteTask = async () => {
+    const pendingSubtasks = task.subtasks.filter((s) => s.status !== 'DONE');
+    if (pendingSubtasks.length > 0) {
+      setIsConfirmCompletionOpen(true);
+      return;
+    }
+
+    try {
+      setCompletionLoading(true);
+      await taskService.updateStatus(task.id, 'DONE');
+      onRefresh();
+    } catch (err) {
+      console.error('Erro ao concluir tarefa:', err);
+    } finally {
+      setCompletionLoading(false);
+    }
+  };
+
+  const handleConfirmCompletion = async () => {
+    try {
+      setCompletionLoading(true);
+      await taskService.updateStatus(task.id, 'DONE', true);
+      setIsConfirmCompletionOpen(false);
+      onRefresh();
+    } catch (err) {
+      console.error('Erro ao concluir tarefa e subtarefas:', err);
+    } finally {
+      setCompletionLoading(false);
+    }
+  };
 
   const handleToggleSubtask = async (subtaskId: string, currentStatus: TaskStatus) => {
     try {
@@ -307,18 +343,38 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                 <Edit className="w-3.5 h-3.5" />
                 Editar
               </button>
-              <button
-                onClick={onClose}
-                className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm"
-              >
-                Concluir
-              </button>
+              {task.status === 'DONE' ? (
+                <button
+                  onClick={onClose}
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer shadow-xs"
+                >
+                  Fechar
+                </button>
+              ) : (
+                <button
+                  onClick={handleCompleteTask}
+                  disabled={completionLoading}
+                  className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm disabled:opacity-50"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Concluir Tarefa
+                </button>
+              )}
             </div>
           </div>
         </div>
       </div>
 
       {/* Nested Modals */}
+      <ConfirmCompletionModal
+        isOpen={isConfirmCompletionOpen}
+        taskTitle={task.title}
+        pendingCount={task.subtasks.filter((s) => s.status !== 'DONE').length}
+        onConfirm={handleConfirmCompletion}
+        onCancel={() => setIsConfirmCompletionOpen(false)}
+        loading={completionLoading}
+      />
+
       <TaskAnalysisModal
         isOpen={isAnalysisModalOpen}
         onClose={() => setIsAnalysisModalOpen(false)}

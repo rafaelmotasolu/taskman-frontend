@@ -4,6 +4,7 @@ import { taskService } from '../services/taskService';
 import type { TaskCreatePayload, TaskPriority, TaskResponse, TaskStatus, TaskSummary } from '../types';
 import { TaskFormModal } from '../components/TaskFormModal';
 import { TaskDetailsModal } from '../components/TaskDetailsModal';
+import { ConfirmCompletionModal } from '../components/ConfirmCompletionModal';
 import {
   Calendar,
   CheckCircle2,
@@ -36,6 +37,15 @@ export const Tasks: React.FC = () => {
 
   const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+
+  // Subtasks completion confirmation state
+  const [pendingCompletion, setPendingCompletion] = useState<{
+    id: string;
+    title: string;
+    pendingCount: number;
+    onConfirmCallback?: () => Promise<void>;
+  } | null>(null);
+  const [completionLoading, setCompletionLoading] = useState(false);
 
   const [searchParams] = useSearchParams();
 
@@ -107,6 +117,29 @@ export const Tasks: React.FC = () => {
 
   const handleCreateOrUpdateTask = async (data: TaskCreatePayload & { status?: TaskStatus }) => {
     if (editingTask) {
+      const incompleteCount = editingTask.subtasks?.filter((s) => s.status !== 'DONE').length || 0;
+      if (data.status === 'DONE' && editingTask.status !== 'DONE' && incompleteCount > 0) {
+        setPendingCompletion({
+          id: editingTask.id,
+          title: data.title,
+          pendingCount: incompleteCount,
+          onConfirmCallback: async () => {
+            await taskService.updateTask(editingTask.id, {
+              title: data.title,
+              description: data.description,
+              priority: data.priority,
+              status: data.status,
+              dueDate: data.dueDate,
+              completeSubtasks: true,
+            });
+            setEditingTask(null);
+            setIsFormModalOpen(false);
+            loadTasks();
+          },
+        });
+        return;
+      }
+
       await taskService.updateTask(editingTask.id, {
         title: data.title,
         description: data.description,
@@ -118,6 +151,7 @@ export const Tasks: React.FC = () => {
       await taskService.createTask(data);
     }
     setEditingTask(null);
+    setIsFormModalOpen(false);
     loadTasks();
   };
 
@@ -134,11 +168,41 @@ export const Tasks: React.FC = () => {
   };
 
   const handleQuickStatusChange = async (id: string, newStatus: TaskStatus) => {
+    if (newStatus === 'DONE') {
+      const task = tasks.find((t) => t.id === id);
+      if (task && task.subtaskCount > 0 && task.completedSubtaskCount < task.subtaskCount) {
+        setPendingCompletion({
+          id: task.id,
+          title: task.title,
+          pendingCount: task.subtaskCount - task.completedSubtaskCount,
+        });
+        return;
+      }
+    }
+
     try {
       await taskService.updateStatus(id, newStatus);
       loadTasks();
     } catch (err) {
       console.error('Erro ao atualizar status da tarefa:', err);
+    }
+  };
+
+  const handleConfirmCompletion = async () => {
+    if (!pendingCompletion) return;
+    try {
+      setCompletionLoading(true);
+      if (pendingCompletion.onConfirmCallback) {
+        await pendingCompletion.onConfirmCallback();
+      } else {
+        await taskService.updateStatus(pendingCompletion.id, 'DONE', true);
+        loadTasks();
+      }
+      setPendingCompletion(null);
+    } catch (err) {
+      console.error('Erro ao concluir tarefa e subtarefas:', err);
+    } finally {
+      setCompletionLoading(false);
     }
   };
 
@@ -370,6 +434,15 @@ export const Tasks: React.FC = () => {
           setIsFormModalOpen(true);
         }}
         onDelete={handleDeleteTask}
+      />
+
+      <ConfirmCompletionModal
+        isOpen={!!pendingCompletion}
+        taskTitle={pendingCompletion?.title || ''}
+        pendingCount={pendingCompletion?.pendingCount}
+        onConfirm={handleConfirmCompletion}
+        onCancel={() => setPendingCompletion(null)}
+        loading={completionLoading}
       />
     </div>
   );

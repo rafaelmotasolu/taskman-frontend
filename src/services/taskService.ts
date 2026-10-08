@@ -49,13 +49,13 @@ export const taskService = {
     return response.data;
   },
 
-  async updateTask(id: string, data: TaskUpdatePayload): Promise<TaskResponse> {
+  async updateTask(id: string, data: TaskUpdatePayload & { completeSubtasks?: boolean }): Promise<TaskResponse> {
     const response = await api.put<TaskResponse>(`/tasks/${id}`, data);
     return response.data;
   },
 
-  async updateStatus(id: string, status: TaskStatus): Promise<TaskResponse> {
-    const response = await api.patch<TaskResponse>(`/tasks/${id}/status`, { status });
+  async updateStatus(id: string, status: TaskStatus, completeSubtasks?: boolean): Promise<TaskResponse> {
+    const response = await api.patch<TaskResponse>(`/tasks/${id}/status`, { status, completeSubtasks });
     return response.data;
   },
 
