@@ -9,7 +9,6 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
-  Flame,
   Hourglass,
   Layers,
   LayoutGrid,
@@ -148,7 +147,10 @@ export const Tasks: React.FC = () => {
         dueDate: data.dueDate,
       });
     } else {
-      await taskService.createTask(data);
+      const created = await taskService.createTask(data);
+      if (data.status && data.status !== 'TODO') {
+        await taskService.updateStatus(created.id, data.status);
+      }
     }
     setEditingTask(null);
     setIsFormModalOpen(false);
@@ -373,15 +375,15 @@ export const Tasks: React.FC = () => {
                       </td>
                       <td className="py-3.5 px-4">
                         <span
-                          className={`text-xs font-medium ${
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
                             t.priority === 'HIGH'
-                              ? 'text-rose-600 font-semibold'
+                              ? 'bg-rose-50 text-rose-700 border-rose-200'
                               : t.priority === 'MEDIUM'
-                              ? 'text-amber-600 font-semibold'
-                              : 'text-slate-500'
+                              ? 'bg-amber-50 text-amber-700 border-amber-200'
+                              : 'bg-sky-50 text-sky-700 border-sky-200'
                           }`}
                         >
-                          {t.priority}
+                          {t.priority === 'HIGH' ? 'Alta' : t.priority === 'MEDIUM' ? 'Média' : 'Baixa'}
                         </span>
                       </td>
                       <td className="py-3.5 px-4 text-xs text-slate-500">
@@ -502,16 +504,15 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
               <div className="flex flex-wrap items-center gap-2 text-xs">
                 {/* Priority */}
                 <span
-                  className={`px-2 py-0.5 rounded-md text-[11px] font-medium flex items-center gap-1 ${
+                  className={`px-2 py-0.5 rounded-md text-[11px] font-semibold border ${
                     task.priority === 'HIGH'
-                      ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                      ? 'bg-rose-50 text-rose-700 border-rose-200'
                       : task.priority === 'MEDIUM'
-                      ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                      : 'bg-slate-100 text-slate-600 border border-slate-200'
+                      ? 'bg-amber-50 text-amber-700 border-amber-200'
+                      : 'bg-sky-50 text-sky-700 border-sky-200'
                   }`}
                 >
-                  <Flame className="w-3 h-3" />
-                  {task.priority}
+                  {task.priority === 'HIGH' ? 'Alta' : task.priority === 'MEDIUM' ? 'Média' : 'Baixa'}
                 </span>
 
                 {/* Due Date */}

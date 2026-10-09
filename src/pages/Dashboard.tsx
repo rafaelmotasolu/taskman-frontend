@@ -5,13 +5,12 @@ import { useLayout } from '../hooks/useLayout';
 import { taskService } from '../services/taskService';
 import { TaskFormModal } from '../components/TaskFormModal';
 import { TaskDetailsModal } from '../components/TaskDetailsModal';
-import type { TaskCreatePayload, TaskResponse, TaskSummary } from '../types';
+import type { TaskCreatePayload, TaskResponse, TaskStatus, TaskSummary } from '../types';
 import {
   ArrowRight,
   Calendar,
   CheckCircle2,
   Clock,
-  Flame,
   Hourglass,
   Layers,
   ListTodo,
@@ -20,6 +19,7 @@ import {
   MessageSquare,
   Plus,
   Sparkles,
+  SlidersHorizontal,
   Zap,
 } from 'lucide-react';
 
@@ -68,8 +68,11 @@ export const Dashboard: React.FC = () => {
     };
   }, []);
 
-  const handleCreateTask = async (payload: TaskCreatePayload) => {
-    await taskService.createTask(payload);
+  const handleCreateTask = async (payload: TaskCreatePayload & { status?: TaskStatus }) => {
+    const created = await taskService.createTask(payload);
+    if (payload.status && payload.status !== 'TODO') {
+      await taskService.updateStatus(created.id, payload.status);
+    }
     loadFocusTasks();
   };
 
@@ -224,7 +227,7 @@ export const Dashboard: React.FC = () => {
           >
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Flame className="w-6 h-6" />
+                <SlidersHorizontal className="w-6 h-6" />
               </div>
               <h3 className="text-base font-bold text-slate-800 group-hover:text-rose-600 transition-colors">
                 Análise Técnica
@@ -300,15 +303,15 @@ export const Dashboard: React.FC = () => {
                     </span>
 
                     <span
-                      className={`text-[11px] font-medium ${
+                      className={`inline-flex items-center text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
                         t.priority === 'HIGH'
-                          ? 'text-rose-600 font-semibold'
+                          ? 'bg-rose-50 text-rose-700 border-rose-200'
                           : t.priority === 'MEDIUM'
-                          ? 'text-amber-600 font-semibold'
-                          : 'text-slate-500'
+                          ? 'bg-amber-50 text-amber-700 border-amber-200'
+                          : 'bg-sky-50 text-sky-700 border-sky-200'
                       }`}
                     >
-                      Prioridade {t.priority}
+                      Prioridade {t.priority === 'HIGH' ? 'Alta' : t.priority === 'MEDIUM' ? 'Média' : 'Baixa'}
                     </span>
 
                     {t.dueDate && (

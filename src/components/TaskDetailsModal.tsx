@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import type { SubtaskItem, TaskAnalysisResponse, TaskResponse, TaskStatus } from '../types';
+import type { SubtaskItem, TaskAnalysisResponse, TaskPriority, TaskResponse, TaskStatus, TaskSummary } from '../types';
 import { taskService } from '../services/taskService';
 import { aiService } from '../services/aiService';
 import { TaskAnalysisModal } from './TaskAnalysisModal';
 import { TaskDecompositionModal } from './TaskDecompositionModal';
 import { ConfirmCompletionModal } from './ConfirmCompletionModal';
+import { ConfirmDeleteSubtaskModal } from './ConfirmDeleteSubtaskModal';
+import { PrioritySlider, StatusSlider } from './TemperatureSlider';
 import {
   X,
   Calendar,
@@ -15,7 +17,7 @@ import {
   Edit,
   Loader2,
   Check,
-  Flame,
+  SlidersHorizontal,
   Layers,
 } from 'lucide-react';
 
@@ -52,7 +54,25 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
   const [isConfirmCompletionOpen, setIsConfirmCompletionOpen] = useState(false);
   const [completionLoading, setCompletionLoading] = useState(false);
 
+  // Subtask deletion states
+  const [subtaskToDelete, setSubtaskToDelete] = useState<TaskSummary | null>(null);
+  const [isDeletingSubtask, setIsDeletingSubtask] = useState(false);
+
   if (!isOpen || !task) return null;
+
+  const handleConfirmDeleteSubtask = async () => {
+    if (!subtaskToDelete || !task) return;
+    try {
+      setIsDeletingSubtask(true);
+      await taskService.deleteSubtask(task.id, subtaskToDelete.id);
+      setSubtaskToDelete(null);
+      onRefresh();
+    } catch (err) {
+      console.error('Erro ao excluir subtarefa:', err);
+    } finally {
+      setIsDeletingSubtask(false);
+    }
+  };
 
   const handleCompleteTask = async () => {
     const pendingSubtasks = task.subtasks.filter((s) => s.status !== 'DONE');
@@ -82,6 +102,45 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
       console.error('Erro ao concluir tarefa e subtarefas:', err);
     } finally {
       setCompletionLoading(false);
+    }
+  };
+
+  const handleStatusSlide = async (newStatus: TaskStatus) => {
+    if (newStatus === task.status) return;
+
+    if (newStatus === 'DONE') {
+      const pendingSubtasks = task.subtasks.filter((s) => s.status !== 'DONE');
+      if (pendingSubtasks.length > 0) {
+        setIsConfirmCompletionOpen(true);
+        return;
+      }
+    }
+
+    try {
+      setCompletionLoading(true);
+      await taskService.updateStatus(task.id, newStatus);
+      onRefresh();
+    } catch (err) {
+      console.error('Erro ao atualizar status da tarefa:', err);
+    } finally {
+      setCompletionLoading(false);
+    }
+  };
+
+  const handlePrioritySlide = async (newPriority: TaskPriority) => {
+    if (newPriority === task.priority) return;
+
+    try {
+      await taskService.updateTask(task.id, {
+        title: task.title,
+        description: task.description || undefined,
+        priority: newPriority,
+        status: task.status,
+        dueDate: task.dueDate || undefined,
+      });
+      onRefresh();
+    } catch (err) {
+      console.error('Erro ao atualizar prioridade da tarefa:', err);
     }
   };
 
@@ -162,28 +221,27 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
             <div className="space-y-1.5 min-w-0 pr-4">
               <div className="flex items-center gap-2">
                 <span
-                  className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                  className={`px-2.5 py-0.5 rounded-full text-xs font-semibold flex items-center gap-1 border ${
                     task.status === 'DONE'
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                       : task.status === 'IN_PROGRESS'
-                      ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                      : 'bg-slate-100 text-slate-600 border border-slate-200'
+                      ? 'bg-amber-50 text-amber-700 border-amber-200'
+                      : 'bg-slate-100 text-slate-600 border-slate-200'
                   }`}
                 >
                   {task.status === 'DONE' ? 'Concluída' : task.status === 'IN_PROGRESS' ? 'Em Progresso' : 'A Fazer'}
                 </span>
 
                 <span
-                  className={`text-xs font-semibold flex items-center gap-1 ${
+                  className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
                     task.priority === 'HIGH'
-                      ? 'text-rose-600'
+                      ? 'bg-rose-50 text-rose-700 border-rose-200'
                       : task.priority === 'MEDIUM'
-                      ? 'text-amber-600'
-                      : 'text-slate-500'
+                      ? 'bg-amber-50 text-amber-700 border-amber-200'
+                      : 'bg-sky-50 text-sky-700 border-sky-200'
                   }`}
                 >
-                  <Flame className="w-3.5 h-3.5" />
-                  Prioridade {task.priority}
+                  Prioridade {task.priority === 'HIGH' ? 'Alta' : task.priority === 'MEDIUM' ? 'Média' : 'Baixa'}
                 </span>
 
                 {task.dueDate && (
@@ -207,6 +265,34 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
 
           {/* Body Content */}
           <div className="p-6 overflow-y-auto space-y-6 flex-1">
+            {/* Direct Slider Adjustments for Priority & Status */}
+            <div className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-4 space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-200/60">
+                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-orange-600" />
+                  Prioridade & Status
+                </span>
+                <span className="text-[11px] text-slate-400">
+                  Deslize para alterar instantaneamente
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <PrioritySlider
+                  value={task.priority}
+                  onChange={handlePrioritySlide}
+                  label="Prioridade"
+                />
+
+                <StatusSlider
+                  value={task.status}
+                  onChange={handleStatusSlide}
+                  disabled={completionLoading}
+                  label="Status"
+                />
+              </div>
+            </div>
+
             {/* Description */}
             {task.description ? (
               <div className="space-y-1.5">
@@ -278,13 +364,13 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                     <div
                       key={st.id}
                       onClick={() => handleToggleSubtask(st.id, st.status)}
-                      className={`p-3 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer ${
+                      className={`group/subtask p-3 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer ${
                         isDone
-                          ? 'bg-slate-50 border-slate-200 opacity-60'
+                          ? 'bg-slate-50 border-slate-200 opacity-60 hover:opacity-100'
                           : 'bg-white border-slate-200 hover:border-slate-300 shadow-xs'
                       }`}
                     >
-                      <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
                         <div
                           className={`w-4.5 h-4.5 rounded-md flex items-center justify-center border transition-colors flex-shrink-0 ${
                             isDone ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 bg-white'
@@ -292,10 +378,22 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                         >
                           {isDone && <Check className="w-3 h-3" />}
                         </div>
-                        <span className={`text-sm ${isDone ? 'line-through text-slate-400' : 'text-slate-800 font-medium'}`}>
+                        <span className={`text-sm truncate ${isDone ? 'line-through text-slate-400' : 'text-slate-800 font-medium'}`}>
                           {st.title}
                         </span>
                       </div>
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSubtaskToDelete(st);
+                        }}
+                        className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors flex-shrink-0 cursor-pointer"
+                        title="Excluir subtarefa"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   );
                 })}
@@ -373,6 +471,14 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
         onConfirm={handleConfirmCompletion}
         onCancel={() => setIsConfirmCompletionOpen(false)}
         loading={completionLoading}
+      />
+
+      <ConfirmDeleteSubtaskModal
+        isOpen={!!subtaskToDelete}
+        subtaskTitle={subtaskToDelete?.title || ''}
+        onConfirm={handleConfirmDeleteSubtask}
+        onCancel={() => setSubtaskToDelete(null)}
+        loading={isDeletingSubtask}
       />
 
       <TaskAnalysisModal

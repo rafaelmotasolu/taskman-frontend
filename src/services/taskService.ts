@@ -62,4 +62,8 @@ export const taskService = {
   async deleteTask(id: string): Promise<void> {
     await api.delete(`/tasks/${id}`);
   },
+
+  async deleteSubtask(parentId: string, subtaskId: string): Promise<void> {
+    await api.delete(`/tasks/${parentId}/subtasks/${subtaskId}`);
+  },
 };

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import type { TaskCreatePayload, TaskPriority, TaskResponse, TaskStatus } from '../types';
 import { aiService } from '../services/aiService';
-import { X, Sparkles, Loader2, Check } from 'lucide-react';
+import { X, Sparkles, Loader2, Check, AlertCircle } from 'lucide-react';
+import { PrioritySlider, StatusSlider } from './TemperatureSlider';
 
 interface TaskFormModalProps {
   isOpen: boolean;
@@ -165,35 +166,33 @@ const TaskFormDialog: React.FC<Omit<TaskFormModalProps, 'isOpen'>> = ({
             />
           </div>
 
-          {/* Priority & Status */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Prioridade</label>
-              <select
-                value={priority}
-                onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-              >
-                <option value="LOW">Baixa</option>
-                <option value="MEDIUM">Média</option>
-                <option value="HIGH">Alta</option>
-              </select>
-            </div>
+          {/* Priority & Status Sliders */}
+          <div className="space-y-4 pt-1 bg-slate-50/50 p-3.5 rounded-2xl border border-slate-200/70">
+            <PrioritySlider
+              value={priority}
+              onChange={setPriority}
+              disabled={submitting}
+              label="Prioridade"
+            />
 
-            {initialData && (
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Status</label>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value as TaskStatus)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-                >
-                  <option value="TODO">A Fazer</option>
-                  <option value="IN_PROGRESS">Em Andamento</option>
-                  <option value="DONE">Concluída</option>
-                </select>
-              </div>
-            )}
+            <StatusSlider
+              value={status}
+              onChange={setStatus}
+              disabled={submitting}
+              label="Status"
+            />
+
+            {status === 'DONE' &&
+              initialData?.subtasks &&
+              initialData.subtasks.filter((s) => s.status !== 'DONE').length > 0 && (
+                <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-start gap-2 animate-in fade-in">
+                  <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <span>
+                    Esta tarefa possui subtarefas pendentes. Ao salvar como Concluída, o sistema solicitará a
+                    confirmação para concluir todas as etapas em cascata.
+                  </span>
+                </div>
+              )}
           </div>
 
           {/* Due Date */}
